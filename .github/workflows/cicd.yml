@@ -1,0 +1,94 @@
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '.github/**'
+
+name: cloudrun-deploy and security scanning
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT }}
+  IMAGE: vuln-image
+  PROFILE: prod
+  # WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
+  # WIF_SA: ${{ secrets.WIF_SA_ACADEMY}}
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Setup gcloud CLI
+    - uses: google-github-actions/setup-gcloud@v0
+      with:
+          project_id: ${{ env.PROJECT_ID }}
+          #service_account_key: ${{ secrets.GCP_SA_KEY_PROD }}
+          #export_default_credentials: true
+     # Configure Workload Identity Federation via a credentials file.
+    # - id: 'auth'
+    #   name: 'Authenticate to Google Cloud'
+    #   uses: 'google-github-actions/auth@v0'
+    #   with:
+    #     workload_identity_provider: ${{ env.WIF_PROVIDER }}
+    #     service_account: ${{ env.WIF_SA }}
+    # Authenticate using the created credentials file.
+    - name: Google Auth
+      id: auth
+      uses: 'google-github-actions/auth@v0'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+    # WARNING: The --cred-file flag is in preview and is subject to change.
+    - id: 'gcloud'
+      name: 'gcloud'
+      run: |-
+        gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+        gcloud components install docker-credential-gcr
+        gcloud --quiet auth configure-docker
+    - name: Generate build ID
+      id: prep
+      run: |
+          env=prod
+          sha=${GITHUB_SHA::8}
+          ts=$(date +%Y%m%d%H%M%S)
+          echo "::set-output name=BUILD_ID::${env}-${ts}-${sha}"
+    - name: Build docker
+      id: build
+      run: |-
+        GCR_IMAGE=gcr.io/$PROJECT_ID/$IMAGE
+        docker build . --tag $GCR_IMAGE
+        docker push $GCR_IMAGE
+        echo "::set-output name=image::$GCR_IMAGE"
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: '${{ steps.build.outputs.image }}'
+        cache-dir: '/var/lib/trivy'
+        exit-code: '0'
+        severity: 'MEDIUM,HIGH,CRITICAL'
+    # Push the Docker image to Google Container Registry
+    - name: Deploy to Cloud Run
+      run: |-
+        gcloud config set project $PROJECT_ID
+        gcloud config set run/region us-central1
+        gcloud run deploy $IMAGE --image=${{ steps.build.outputs.image }} \
+        --platform managed \
+        --allow-unauthenticated
+    - name: snyk test
+      continue-on-error: true
+      run: |-
+        npm install snyk -g
+        snyk auth e6b5719c-46fa-4dd7-8cf1-50ebd68923ae
+        snyk code test
+    - name: Run HawkScan
+      uses: stackhawk/hawkscan-action@v2
+      with:
+        apiKey: ${{ secrets.HAWK_API_KEY }}
