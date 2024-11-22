@@ -68,7 +68,7 @@ jobs:
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@0.28.0
+      uses: aquasecurity/trivy-action@master
       with:
         image-ref: '${{ steps.build.outputs.image }}'
         cache-dir: '/var/lib/trivy'
