@@ -92,5 +92,4 @@ jobs:
       uses: stackhawk/hawkscan-action@v3
       with: 
         apiKey: ${{ secrets.HAWK_API_KEY }}
-
         
