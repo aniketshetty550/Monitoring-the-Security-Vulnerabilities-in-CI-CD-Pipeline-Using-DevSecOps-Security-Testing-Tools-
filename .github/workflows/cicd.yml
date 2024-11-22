@@ -9,7 +9,7 @@ on:
 name: cloudrun-deploy and security scanning
 
 env:
-  PROJECT_ID: ${{ secrets.GCP_CREDENTIALS }}
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   IMAGE: vuln-image
   PROFILE: prod
 
@@ -29,7 +29,7 @@ jobs:
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+        credentials_json: '${{ secrets.GCP_PROJECT_ID }}'
 
     - name: Configure Docker Auth
       run: |-
@@ -49,7 +49,7 @@ jobs:
         docker build . --tag $GCR_IMAGE
         docker push $GCR_IMAGE
         echo "image=$GCR_IMAGE" >> $GITHUB_ENV
-        
+
     - name: Deploy to Cloud Run
       run: |-
         gcloud config set project $PROJECT_ID
