@@ -68,7 +68,7 @@ jobs:
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@v0.7.0
+      uses: aquasecurity/trivy-action@0.28.0
       with:
         image-ref: '${{ steps.build.outputs.image }}'
         cache-dir: '/var/lib/trivy'
@@ -89,7 +89,7 @@ jobs:
         snyk auth c64046ce-9e36-4baf-b969-1385037a5c22
         snyk code test
     - name: Run HawkScan
-      uses: stackhawk/hawkscan-action@v3
+      uses: stackhawk/hawkscan-action@v2.2.0
       with: 
         apiKey: ${{ secrets.HAWK_API_KEY }}
         
