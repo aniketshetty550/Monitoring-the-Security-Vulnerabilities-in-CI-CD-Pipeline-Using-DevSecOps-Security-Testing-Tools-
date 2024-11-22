@@ -1,0 +1,22 @@
+name: Build and Push Docker Image
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Log in to GCP Artifact Registry
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+    - name: Configure Docker
+      run: |
+        gcloud auth configure-docker
+    - name: Build Docker image
+      run: docker build -t us-central1-docker.pkg.dev/<PROJECT_ID>/<REPO_NAME>/dvwa:latest .
+    - name: Push Docker image
+      run: docker push us-central1-docker.pkg.dev/<PROJECT_ID>/<REPO_NAME>/dvwa:latest
