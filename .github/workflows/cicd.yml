@@ -10,10 +10,10 @@ name: cloudrun-deploy and security scanning
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-  IMAGE: vuln-image
+  IMAGE: docker-repo
   PROFILE: prod
-  # WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
-  # WIF_SA: ${{ secrets.WIF_SA_ACADEMY}}
+  WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
+  WIF_SA: ${{ secrets.WIF_SA_ACADEMY}}
 
 jobs:
   setup-build-publish-deploy:
