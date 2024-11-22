@@ -9,11 +9,8 @@ on:
 name: cloudrun-deploy and security scanning
 
 env:
-  PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   IMAGE: vuln-image
   PROFILE: prod
-  # WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
-  # WIF_SA: ${{ secrets.WIF_SA_ACADEMY}}
 
 jobs:
   setup-build-publish-deploy:
@@ -30,66 +27,60 @@ jobs:
     # Setup gcloud CLI
     - uses: google-github-actions/setup-gcloud@v1
       with:
-          project_id: ${{ env.PROJECT_ID }}
-          #service_account_key: ${{ secrets.GCP_SA_KEY_PROD }}
-          #export_default_credentials: true
-     # Configure Workload Identity Federation via a credentials file.
-    # - id: 'auth'
-    #   name: 'Authenticate to Google Cloud'
-    #   uses: 'google-github-actions/auth@v0'
-    #   with:
-    #     workload_identity_provider: ${{ env.WIF_PROVIDER }}
-    #     service_account: ${{ env.WIF_SA }}
-    # Authenticate using the created credentials file.
+        project_id: ${{ secrets.GCP_PROJECT }}
+
     - name: Google Auth
       id: auth
-      uses: 'google-github-actions/auth@v1'
+      uses: google-github-actions/auth@v1
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
-    # WARNING: The --cred-file flag is in preview and is subject to change.
+
     - id: 'gcloud'
       name: 'gcloud'
       run: |-
         gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
         gcloud components install docker-credential-gcr
         gcloud --quiet auth configure-docker
+
     - name: Generate build ID
       id: prep  
       run: |
-          env=prod
-          sha=${GITHUB_SHA::8}
-          ts=$(date +%Y%m%d%H%M%S)
-          echo "::set-output name=BUILD_ID::${env}-${ts}-${sha}"
+        env=prod
+        sha=${GITHUB_SHA::8}
+        ts=$(date +%Y%m%d%H%M%S)
+        echo "BUILD_ID=${env}-${ts}-${sha}" >> $GITHUB_ENV
+
     - name: Build docker
-      id: build
       run: |-
-        GCR_IMAGE=gcr.io/$PROJECT_ID/$IMAGE
-        docker build . --tag $GCR_IMAGE
-        docker push $GCR_IMAGE
-        echo "::set-output name=image::$GCR_IMAGE"
+        GCR_IMAGE=gcr.io/${{ secrets.GCP_PROJECT }}/$IMAGE
+        docker buildx build . --tag $GCR_IMAGE --push
+        echo "image=$GCR_IMAGE" >> $GITHUB_ENV
+
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
+      uses: aquasecurity/trivy-action@v0.10.0
       with:
-        image-ref: '${{ steps.build.outputs.image }}'
-        cache-dir: '/var/lib/trivy'
+        image-ref: $GCR_IMAGE
+        cache-dir: ${{ runner.temp }}/trivy-cache
         exit-code: '0'
         severity: 'MEDIUM,HIGH,CRITICAL'
+
     # Push the Docker image to Google Container Registry
     - name: Deploy to Cloud Run
       run: |-
-        gcloud config set project $PROJECT_ID
+        gcloud config set project ${{ secrets.GCP_PROJECT }}
         gcloud config set run/region us-central1
-        gcloud run deploy $IMAGE --image=${{ steps.build.outputs.image }} \
-        --platform managed \
-        --allow-unauthenticated
+        gcloud run deploy vuln-image --image=$GCR_IMAGE \
+          --platform managed \
+          --allow-unauthenticated
+
     - name: snyk test
       continue-on-error: true
       run: |-
         npm install snyk -g
-        snyk auth c64046ce-9e36-4baf-b969-1385037a5c22
+        snyk auth ${{ secrets.SNYK_API_KEY }}
         snyk code test
+
     - name: Run HawkScan
       uses: stackhawk/hawkscan-action@v2.2.0
       with: 
         apiKey: ${{ secrets.HAWK_API_KEY }}
-        
