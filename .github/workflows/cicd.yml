@@ -51,7 +51,7 @@ jobs:
       name: 'gcloud'
       run: |-
         gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
-        gcloud auth configure-docker us-west1-docker.pkg.dev
+        gcloud auth configure-docker europe-docker.pkg.dev
         gcloud components install docker-credential-gcr
         gcloud --quiet auth configure-docker
     - name: Generate build ID
@@ -64,6 +64,8 @@ jobs:
     - name: Build docker
       id: build
       run: |-
+        gcloud auth configure-docker \
+          europe-docker.pkg.dev
         GCR_IMAGE=europe-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest
         docker build . --tag $GCR_IMAGE
         docker push $GCR_IMAGE
