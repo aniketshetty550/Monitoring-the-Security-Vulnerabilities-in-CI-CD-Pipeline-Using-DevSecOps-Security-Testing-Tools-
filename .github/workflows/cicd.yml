@@ -43,7 +43,7 @@ jobs:
     # Authenticate using the created credentials file.
     - name: Google Auth
       id: auth
-      uses: 'google-github-actions/auth@v0'
+      uses: 'google-github-actions/auth@v2'
       with:
         credentials_json: '${{ secrets.GCP_PROJECT }}'
     # WARNING: The --cred-file flag is in preview and is subject to change.
