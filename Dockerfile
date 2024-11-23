@@ -31,9 +31,14 @@ COPY config.inc.php /var/www/html/config/
 RUN chown www-data:www-data -R /var/www/html && \
     rm /var/www/html/index.html
 
-RUN service mysql start && \
-    sleep 3 && \
-    mysql -uroot -pvulnerables -e "CREATE USER 'app'@'localhost' IDENTIFIED BY 'vulnerables'; CREATE DATABASE dvwa; GRANT ALL PRIVILEGES ON dvwa.* TO 'app'@'localhost';"
+RUN /usr/bin/mysqld_safe & \
+    sleep 5 && \
+    until mysqladmin ping -uroot -pvulnerables; do \
+        echo "Waiting for MySQL to be ready..."; \
+        sleep 2; \
+    done && \
+    mysql -uroot -pvulnerables -e "CREATE USER 'app'@'localhost' IDENTIFIED BY 'vulnerables'; CREATE DATABASE dvwa; GRANT ALL PRIVILEGES ON dvwa.* TO 'app'@'localhost';" && \
+    kill $(pgrep mysqld)
 
 EXPOSE 80
 
