@@ -1,5 +1,5 @@
 # Use a more recent Debian base image
-FROM debian:stretch
+FROM ubuntu:latest
 
 
 
