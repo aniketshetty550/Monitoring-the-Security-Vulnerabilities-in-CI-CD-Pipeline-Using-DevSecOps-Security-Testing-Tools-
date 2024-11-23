@@ -10,7 +10,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
     - name: Log in to GCP Artifact Registry
-      uses: google-github-actions/auth@v1
+      uses: google-github-actions/setup-gcloud@v1
       with:
         credentials_json: ${{ secrets.GCP_PROJECT }}
     - name: Configure Docker
