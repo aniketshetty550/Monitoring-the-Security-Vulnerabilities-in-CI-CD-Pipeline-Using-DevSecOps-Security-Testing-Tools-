@@ -24,7 +24,7 @@ jobs:
       actions: read
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v3
 
     # Setup gcloud CLI
@@ -68,7 +68,7 @@ jobs:
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
+      uses: aquasecurity/trivy-action@0.28.0
       with:
         image-ref: '${{ steps.build.outputs.image }}'
         cache-dir: '/var/lib/trivy'
@@ -89,6 +89,6 @@ jobs:
         snyk auth e6b5719c-46fa-4dd7-8cf1-50ebd68923ae
         snyk code test
     - name: Run HawkScan
-      uses: stackhawk/hawkscan-action@v2
+      uses: stackhawk/hawkscan-action@v2.2.0
       with:
         apiKey: ${{ secrets.HAWK_API_KEY }}
