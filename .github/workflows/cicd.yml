@@ -26,13 +26,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    # Authenticate using the created credentials file.
-  
-    - name: Google Auth
-      id: auth
-      uses: 'google-github-actions/auth@v1'
-      with:
-        credentials_json: '${{ secrets.GCP_PROJECT }}'
 
     # Setup gcloud CLI
     - uses: google-github-actions/setup-gcloud@v2
@@ -47,7 +40,12 @@ jobs:
     #   with:
     #     workload_identity_provider: ${{ env.WIF_PROVIDER }}
     #     service_account: ${{ env.WIF_SA }}
-    
+    # Authenticate using the created credentials file.
+    - name: Google Auth
+      id: auth
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_PROJECT }}'
     # WARNING: The --cred-file flag is in preview and is subject to change.
     - id: 'gcloud'
       name: 'gcloud'
