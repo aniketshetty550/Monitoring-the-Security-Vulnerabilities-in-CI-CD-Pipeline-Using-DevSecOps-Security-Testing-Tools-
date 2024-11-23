@@ -25,10 +25,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
 
     # Setup gcloud CLI
-    - uses: google-github-actions/setup-gcloud@v2
+    - uses: google-github-actions/setup-gcloud@v0
       with:
           project_id: ${{ env.PROJECT_ID }}
           #service_account_key: ${{ secrets.GCP_SA_KEY_PROD }}
@@ -86,7 +86,7 @@ jobs:
       continue-on-error: true
       run: |-
         npm install snyk -g
-        snyk auth c64046ce-9e36-4baf-b969-1385037a5c22
+        snyk auth e6b5719c-46fa-4dd7-8cf1-50ebd68923ae
         snyk code test
     - name: Run HawkScan
       uses: stackhawk/hawkscan-action@v2
