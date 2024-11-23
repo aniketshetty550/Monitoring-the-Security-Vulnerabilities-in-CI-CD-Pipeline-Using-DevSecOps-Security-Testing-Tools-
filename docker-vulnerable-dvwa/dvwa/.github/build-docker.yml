@@ -12,7 +12,7 @@ jobs:
     - name: Log in to GCP Artifact Registry
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+        credentials_json: ${{ secrets.GCP_PROJECT }}
     - name: Configure Docker
       run: |
         gcloud auth configure-docker
