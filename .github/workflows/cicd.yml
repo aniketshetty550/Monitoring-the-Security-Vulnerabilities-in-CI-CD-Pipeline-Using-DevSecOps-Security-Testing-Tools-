@@ -24,11 +24,11 @@ jobs:
       actions: read
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v2
 
     # Setup gcloud CLI
-    - uses: google-github-actions/setup-gcloud@v2
+    - uses: google-github-actions/setup-gcloud@v0
       with:
           project_id: ${{ env.PROJECT_ID }}
           #service_account_key: ${{ secrets.GCP_SA_KEY_PROD }}
@@ -43,7 +43,7 @@ jobs:
     # Authenticate using the created credentials file.
     - name: Google Auth
       id: auth
-      uses: 'google-github-actions/auth@v2'
+      uses: 'google-github-actions/auth@v0'
       with:
         credentials_json: '${{ secrets.GCP_PROJECT }}'
     # WARNING: The --cred-file flag is in preview and is subject to change.
@@ -68,7 +68,7 @@ jobs:
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@0.28.0
+      uses: aquasecurity/trivy-action@master
       with:
         image-ref: '${{ steps.build.outputs.image }}'
         cache-dir: '/var/lib/trivy'
@@ -89,6 +89,6 @@ jobs:
         snyk auth e6b5719c-46fa-4dd7-8cf1-50ebd68923ae
         snyk code test
     - name: Run HawkScan
-      uses: stackhawk/hawkscan-action@v2.2.0
+      uses: stackhawk/hawkscan-action@v2
       with:
         apiKey: ${{ secrets.HAWK_API_KEY }}
