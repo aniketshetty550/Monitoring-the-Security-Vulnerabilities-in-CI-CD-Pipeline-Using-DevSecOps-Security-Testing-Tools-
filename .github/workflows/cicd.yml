@@ -81,7 +81,7 @@ jobs:
     - name: Deploy to Cloud Run
       run: |-
         gcloud config set project $PROJECT_ID
-        gcloud config set run/region us-central1
+        gcloud config set run/region us-centr al1
         gcloud run deploy $IMAGE --image=${{ steps.build.outputs.image }} \
         --platform managed \
         --allow-unauthenticated
@@ -92,6 +92,6 @@ jobs:
         snyk auth c64046ce-9e36-4baf-b969-1385037a5c22
         snyk code test
     - name: Run HawkScan
-      uses: stackhawk/hawkscan-action@v2
+      uses: stackhawk/hawkscan-action@v2.2.0
       with:
         apiKey: ${{ secrets.HAWK_API_KEY }}
