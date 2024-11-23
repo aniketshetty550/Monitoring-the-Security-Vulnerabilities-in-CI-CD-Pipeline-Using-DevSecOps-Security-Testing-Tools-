@@ -77,7 +77,7 @@ jobs:
     #     cache-dir: '/var/lib/trivy'
     #     exit-code: '0'
     #     severity: 'MEDIUM,HIGH,CRITICAL'
-    # Push the Docker image to Google Container Registry
+    #Push the Docker image to Google Container Registry
     - name: Deploy to Cloud Run
       run: |-
         gcloud config set project $PROJECT_ID
