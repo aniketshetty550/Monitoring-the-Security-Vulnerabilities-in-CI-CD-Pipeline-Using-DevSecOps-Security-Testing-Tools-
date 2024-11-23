@@ -63,7 +63,7 @@ jobs:
     - name: Build docker
       id: build
       run: |-
-        GCR_IMAGE=europe-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest
+        GCR_IMAGE=europe-docker.pkg.dev/absolute-advice-442515-h8/docker-repo
         docker build . --tag $GCR_IMAGE
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
