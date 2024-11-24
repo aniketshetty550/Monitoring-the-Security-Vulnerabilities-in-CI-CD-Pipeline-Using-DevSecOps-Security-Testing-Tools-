@@ -17,6 +17,6 @@ jobs:
       run: |
         gcloud auth configure-docker
     - name: Build Docker image
-      run: docker build -t europe-docker.pkg.dev/<absolute-advice-442515-h8>/<docker-repo>/dvwa:latest .
+      run: docker build -t us-central1-docker.pkg.dev/<absolute-advice-442515-h8>/<docker-repo>/dvwa:latest .
     - name: Push Docker image
-      run: docker push europe-docker.pkg.dev/<absolute-advice-442515-h8>/<docker-repo>/dvwa:latest
+      run: docker push us-central1-docker.pkg.dev/<absolute-advice-442515-h8>/<docker-repo>/dvwa:latest

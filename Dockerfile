@@ -40,7 +40,7 @@ RUN /usr/bin/mysqld_safe & \
     mysql -uroot -pvulnerables -e "CREATE USER 'app'@'localhost' IDENTIFIED BY 'vulnerables'; CREATE DATABASE dvwa; GRANT ALL PRIVILEGES ON dvwa.* TO 'app'@'localhost';" && \
     kill $(pgrep mysqld)
 
-EXPOSE 8080
+EXPOSE 8080 
 
 COPY main.sh /
 ENTRYPOINT ["/main.sh"]

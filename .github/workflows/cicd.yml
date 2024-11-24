@@ -51,7 +51,7 @@ jobs:
       name: 'gcloud'
       run: |-
         gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
-        gcloud auth configure-docker europe-docker.pkg.dev
+        gcloud auth configure-docker us-central1-docker.pkg.dev
         gcloud components install docker-credential-gcr
         gcloud --quiet auth configure-docker
     - name: Generate build ID
@@ -66,7 +66,7 @@ jobs:
       run: |-
         gcloud auth configure-docker \
           europe-docker.pkg.dev
-        GCR_IMAGE=europe-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest
+        GCR_IMAGE=us-central1-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest
         docker build . --tag $GCR_IMAGE
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
@@ -82,7 +82,7 @@ jobs:
       run: |-
         gcloud config set project absolute-advice-442515-h8
         gcloud config set run/region us-central1
-        gcloud run deploy vuln-image --image=europe-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest \
+        gcloud run deploy vuln-image --image=us-central1-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest \
         --platform managed \
         --allow-unauthenticated
         --timeout=300s
