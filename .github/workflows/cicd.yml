@@ -81,8 +81,8 @@ jobs:
     - name: Deploy to Cloud Run
       run: |-
         gcloud config set project $PROJECT_ID
-        gcloud config set run/region us-centr al1
-        gcloud run deploy $IMAGE --image=${{ steps.build.outputs.image }} \
+        gcloud config set run/region us-central1
+        gcloud run deploy vuln-image --image=europe-docker.pkg.dev/$absolute-advice-442515-h8/docker-repo/dvwa:latest \
         --platform managed \
         --allow-unauthenticated
     - name: snyk test
