@@ -27,13 +27,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    # Setup gcloud CLI
+    # Setup gcloud CLI.
     - uses: google-github-actions/setup-gcloud@v2
       with:
           project_id: ${{ env.PROJECT_ID }}
           #service_account_key: ${{ secrets.GCP_SA_KEY_PROD }}
           #export_default_credentials: true
-     # Configure Workload Identity Federation via a credentials file.
+     # Configure Workload Identity Federation via a credentials file
     # - id: 'auth'
     #   name: 'Authenticate to Google Cloud'
     #   uses: 'google-github-actions/auth@v0'
