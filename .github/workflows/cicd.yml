@@ -82,10 +82,11 @@ jobs:
       run: |-
         gcloud config set project absolute-advice-442515-h8
         gcloud config set run/region us-central1
-        gcloud run deploy $IMAGE --image=${{ steps.build.outputs.image }} \
-        --platform managed \  
-        --allow-unauthenticated
-        --timeout=300s
+        gcloud run deploy my-service \
+          --image=${{ steps.build.outputs.image }} \
+          --platform managed \
+          --allow-unauthenticated \
+          --timeout=300s
     - name: snyk test
       continue-on-error: true
       run: |-
