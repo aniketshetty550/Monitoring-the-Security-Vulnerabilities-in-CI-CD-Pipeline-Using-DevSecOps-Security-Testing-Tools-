@@ -80,9 +80,9 @@ jobs:
     #Push the Docker image to Google Container Registry
     - name: Deploy to Cloud Run
       run: |-
-        gcloud config set project $PROJECT_ID
+        gcloud config set project absolute-advice-442515-h8
         gcloud config set run/region us-central1
-        gcloud run deploy vuln-image --image=europe-docker.pkg.dev/$absolute-advice-442515-h8/docker-repo/dvwa:latest \
+        gcloud run deploy vuln-image --image=europe-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest \
         --platform managed \
         --allow-unauthenticated
     - name: snyk test
