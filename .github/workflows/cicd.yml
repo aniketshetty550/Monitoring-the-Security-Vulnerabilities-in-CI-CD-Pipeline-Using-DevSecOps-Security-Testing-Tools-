@@ -85,7 +85,7 @@ jobs:
         gcloud config set run/region us-central1
         
         # Deploy to Cloud Run using the image built in the previous step
-        gcloud run deploy dvwa \
+        gcloud run deploy vuln-image \
           --image=${{ steps.build.outputs.image }} \
           --platform managed \
           --allow-unauthenticated
