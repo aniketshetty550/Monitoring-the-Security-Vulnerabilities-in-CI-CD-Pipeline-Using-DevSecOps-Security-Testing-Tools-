@@ -84,8 +84,7 @@ jobs:
         gcloud config set run/region us-central1
         gcloud run deploy vuln-image --timeout=300 --region=us-central1
         gcloud run deploy vuln-image --set-env-vars=KEY1=VALUE1,PORT=8080 --region=us-central1
-        gcloud run deploy vuln-image --set-env-vars=KEY1=VALUE1,PORT=8080 --region=us-central1
-          --image=${{ steps.build.outputs.image }} \
+        gcloud run deploy $IMAGE --image=${{ steps.build.outputs.image }} \
           --platform managed \
           --allow-unauthenticated \
     - name: snyk test
