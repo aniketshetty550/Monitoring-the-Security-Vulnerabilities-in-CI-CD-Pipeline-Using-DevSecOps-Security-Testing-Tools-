@@ -92,7 +92,7 @@ jobs:
           --timeout=300 \
           --platform=managed \
           --allow-unauthenticated \
-          --set-env-vars=KEY1=VALUE1,PORT=8080
+          --set-env-vars=KEY1=VALUE1
     - name: snyk test
       continue-on-error: true
       run: |-
