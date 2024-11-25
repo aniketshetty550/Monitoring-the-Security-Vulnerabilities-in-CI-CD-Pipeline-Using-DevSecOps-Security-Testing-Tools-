@@ -80,19 +80,23 @@ jobs:
       #Push the Docker image to Google Container Registry
     - name: Deploy to Cloud Run
       run: |-
-        # Set the project
-        gcloud config set project absolute-advice-442515-h8
-        
-        # Set the region
+        # Set project ID and region
+        gcloud config set project $PROJECT_ID
         gcloud config set run/region us-central1
         
-        # Deploy the container image with appropriate parameters
-        gcloud run deploy vuln-image \
+        # Deploy to Cloud Run using the image built in the previous step
+        gcloud run deploy dvwa \
           --image=${{ steps.build.outputs.image }} \
-          --timeout=300 \
-          --platform=managed \
-          --allow-unauthenticated \
-          --set-env-vars=KEY1=VALUE1
+          --platform managed \
+          --allow-unauthenticated
+    
+    # - name: Deploy to Cloud Run
+    #   run: |-
+    #     gcloud config set project $PROJECT_ID
+    #     gcloud config set run/region us-central1
+    #     gcloud run deploy $IMAGE --image=${{ steps.build.outputs.image }} \
+    #     --platform managed \
+    #     --allow-unauthenticated
     - name: snyk test
       continue-on-error: true
       run: |-
