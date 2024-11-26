@@ -103,8 +103,7 @@ jobs:
         npm install snyk -g
         snyk auth 5db83b3a-a352-480d-9a97-e7a7af955133
         snyk code test
-        exit-code: '0'
     - name: Run HawkScan
       uses: stackhawk/hawkscan-action@v2.2.0
       with:
-        apiKey: ${{ secrets.HAWK_API_KEY }}
+        apiKey: a16b7e0b-8861-408f-b7f0-3049fa1eecb7
