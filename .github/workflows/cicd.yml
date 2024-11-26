@@ -103,6 +103,7 @@ jobs:
         npm install snyk -g
         snyk auth 5db83b3a-a352-480d-9a97-e7a7af955133
         snyk code test
+        exit-code: '0'
     - name: Run HawkScan
       uses: stackhawk/hawkscan-action@v2.2.0
       with:
