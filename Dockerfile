@@ -9,4 +9,4 @@ RUN cp /usr/local/tomcat/AltoroJ/build/libs/altoromutual.war /usr/local/tomcat/w
 EXPOSE 8080 
 CMD ["catalina.sh", "run"]
 
-#Deloying the Docker file for Altoro Mutual
+#Deloying the Docker file for Altoro Mutual which is also a vulnerable Application for testing purpose

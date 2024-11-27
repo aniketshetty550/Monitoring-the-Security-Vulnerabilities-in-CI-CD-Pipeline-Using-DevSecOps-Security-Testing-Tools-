@@ -106,4 +106,4 @@ jobs:
     - name: Run HawkScan
       uses: stackhawk/hawkscan-action@v2.2.0
       with:
-        apiKey: a16b7e0b-8861-408f-b7f0-3049fa1eecb7
+        apiKey: hawk.YSfa2Cgcos6LPEFF9TxO.zJyiJalTXuwZs2L0TOOi
