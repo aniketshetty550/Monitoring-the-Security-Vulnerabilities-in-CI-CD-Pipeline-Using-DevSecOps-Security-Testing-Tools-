@@ -1,11 +1,12 @@
-# -- stackhawk configuration for vuln-app --
+# -- stackhawk configuration for VULNERABLE IMAGE --
 app:
   # -- An applicationId obtained from the StackHawk platform. --
-  applicationId: f1f32176-7c3b-459b-8391-b92ded6cde81 # (required)
+  applicationId: 867703c8-2323-456f-bcdb-709fe0862f30 # (required)
   # -- The environment for the applicationId defined in the StackHawk platform. --
   env: Development # (required)
   # -- The url of your application to scan --
-  host: https://dvwa-dl4ymzsdca-uc.a.run.app # (required)
+  host: https://vuln-image-77572195473.us-central1.run.app # (required)
+
 
 # -- Customized Configuration for GraphQL/SOAP/OpenAPI, add here --
   # Configuration Docs: https://docs.stackhawk.com/hawkscan/configuration/
