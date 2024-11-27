@@ -1,4 +1,4 @@
-# -- stackhawk configuration for VULNERABLE IMAGE --
+# -- stackhawk configuration for Vulnerable Image --
 app:
   # -- An applicationId obtained from the StackHawk platform. --
   applicationId: 867703c8-2323-456f-bcdb-709fe0862f30 # (required)
