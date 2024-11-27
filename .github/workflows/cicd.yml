@@ -100,9 +100,19 @@ jobs:
     - name: snyk test
       continue-on-error: true
       run: |-
-        npm install snyk -g
+        npm install snyk -g 
         snyk auth 5db83b3a-a352-480d-9a97-e7a7af955133
         snyk code test
+        # Ensure Java 17 is installed for HawkScan
+    - name: Set up Java 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Check Java Version
+      run: java -version
+    
     - name: Run HawkScan
       uses: stackhawk/hawkscan-action@v2.2.0
       with:
