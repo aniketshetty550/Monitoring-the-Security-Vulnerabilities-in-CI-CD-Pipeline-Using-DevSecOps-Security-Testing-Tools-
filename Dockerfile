@@ -6,5 +6,7 @@ RUN mkdir /opt/gradle
 RUN unzip -d /opt/gradle gradle-6.9.4-bin.zip
 RUN cd AltoroJ && /opt/gradle/gradle-6.9.4/bin/gradle build
 RUN cp /usr/local/tomcat/AltoroJ/build/libs/altoromutual.war /usr/local/tomcat/webapps
-EXPOSE 8080
+EXPOSE 8080 
 CMD ["catalina.sh", "run"]
+
+#Deloying the Docker file for Altoro Mutual
