@@ -104,25 +104,25 @@ jobs:
         snyk auth 5db83b3a-a352-480d-9a97-e7a7af955133
         snyk code test
         # Ensure Java 17 is installed for HawkScan
-    - name: Set up Java 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+    # - name: Set up Java 17
+    #   uses: actions/setup-java@v3
+    #   with:
+    #     java-version: '17'
+    #     distribution: 'temurin'
         
-    - name: Check Java Version
-      run: java -version
+    # - name: Check Java Version
+    #   run: java -version
     
     - name: Run HawkScan
       uses: stackhawk/hawkscan-action@v2.2.0
       with:
         apiKey: hawk.5dbJjP5atUA823whAcFb.ZdhsXAaXtkIlq6lodfhH
     
-    # Install and Configure Datadog Agent
-    - name: Install Datadog Agent
-      run: |-
-        DD_AGENT_MAJOR_VERSION=7 DD_API_KEY="ce3cd01cc0cc4170b3159c2fe1a1d3b1" DD_SITE="datadoghq.com" \
-        bash -c "$(curl -L https://s3.amazonaws.com/dd-agent/scripts/install_script.sh)"
+    # # Install and Configure Datadog Agent
+    # - name: Install Datadog Agent
+    #   run: |-
+    #     DD_AGENT_MAJOR_VERSION=7 DD_API_KEY="ce3cd01cc0cc4170b3159c2fe1a1d3b1" DD_SITE="datadoghq.com" \
+    #     bash -c "$(curl -L https://s3.amazonaws.com/dd-agent/scripts/install_script.sh)"
  
     - name: Configure Datadog Agent for Production
       run: |-
