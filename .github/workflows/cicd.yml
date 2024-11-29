@@ -161,14 +161,25 @@ jobs:
     # Check Datadog Synthetic Test Results
     - name: Check Datadog Synthetic Test Results
       run: |-
-        TEST_ID="reb-33w-b6x"  # Replace with your Datadog Synthetic Test ID
-        STATUS=$(curl -s "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/results" \
-          -H "DD-API-KEY:ce3cd01cc0cc4170b3159c2fe1a1d3b1")
-        echo "Synthetic test status: $STATUS"
-        if [ "$STATUS" != "passed" ]; then
-          echo "Synthetic tests failed."
-          exit 1
-        fi
+          TEST_ID="reb-33w-b6x"  # Replace with your Datadog Synthetic Test ID
+          API_KEY=ce3cd01cc0cc4170b3159c2fe1a1d3b1
+       
+          # Fetch synthetic test results
+          RESPONSE=$(curl -s -X GET "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/results" \
+            -H "DD-API-KEY:ce3cd01cc0cc4170b3159c2fe1a1d3b1" \
+            -H "Content-Type: application/json")
+       
+          echo "Datadog API Response: $RESPONSE"
+       
+          # Extract status
+          STATUS=$(echo $RESPONSE | jq -r '.results[0].status')
+       
+          echo "Synthetic test status: $STATUS"
+       
+          if [ "$STATUS" != "passed" ]; then
+            echo "Synthetic tests failed."
+            exit 1
+          fi
  
     # Upload Datadog Logs and Metrics
     - name: Upload Datadog Logs
