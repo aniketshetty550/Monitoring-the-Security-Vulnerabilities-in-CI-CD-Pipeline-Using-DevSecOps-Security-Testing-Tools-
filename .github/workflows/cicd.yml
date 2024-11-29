@@ -169,7 +169,7 @@ jobs:
         #   echo "Synthetic tests failed."
         #   exit 1
         # fi
-        # #!/bin/bash
+        # #!/bin/bash   
         TEST_ID="reb-33w-b6x"  # Replace with the actual Datadog Synthetic Test ID
         API_KEY="ce3cd01cc0cc4170b3159c2fe1a1d3b1"
 
