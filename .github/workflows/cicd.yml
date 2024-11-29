@@ -153,7 +153,7 @@ jobs:
     # Run Datadog Synthetic Tests
     - name: Run Datadog Synthetic Tests
       run: |-
-        TEST_ID="reb-33w-b6x"  # Replace with your Datadog Synthetic Test ID
+        TEST_ID="hkj-mzi-ms6"  # Replace with your Datadog Synthetic Test ID
         curl -X POST "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/run" \
         -H "Content-Type: application/json" \
         -H "DD-API-KEY:ce3cd01cc0cc4170b3159c2fe1a1d3b1"
@@ -161,7 +161,7 @@ jobs:
     # Check Datadog Synthetic Test Results
     - name: Check Datadog Synthetic Test Results
       run: |-
-          TEST_ID="reb-33w-b6x"  # Replace with your Datadog Synthetic Test ID
+          TEST_ID="hkj-mzi-ms6"  # Replace with your Datadog Synthetic Test ID
           
           # Fetch synthetic test results
           RESPONSE=$(curl -s -X GET "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/results" \
