@@ -153,16 +153,16 @@ jobs:
     # Run Datadog Synthetic Tests
     - name: Run Datadog Synthetic Tests
       run: |-
-        TEST_ID="<20775662>"  # Replace with your Datadog Synthetic Test ID
-        curl -X POST "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/run" \
+        TEST_ID="reb-33w-b6x"  # Replace with your Datadog Synthetic Test ID
+        curl -X POST "https://api.datadoghq.com/api/v1/synthetics/tests/<TEST_ID>/results" \
         -H "Content-Type: application/json" \
-        -H "DD-API-KEY:ce3cd01cc0cc4170b3159c2fe1a1d3b1"
+        -H "DD-API-KEY: ce3cd01cc0cc4170b3159c2fe1a1d3b1"
  
     # Check Datadog Synthetic Test Results
     - name: Check Datadog Synthetic Test Results
       run: |-
-        TEST_ID="<20775662>"  # Replace with your Datadog Synthetic Test ID
-        STATUS=$(curl -s "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/results" \
+        TEST_ID="reb-33w-b6x"  # Replace with your Datadog Synthetic Test ID
+        STATUS=$(curl -s "https://api.datadoghq.com/api/v1/synthetics/tests/<TEST_ID>/results" \
           -H "DD-API-KEY: ce3cd01cc0cc4170b3159c2fe1a1d3b1" | jq -r '.results[0].status')
         echo "Synthetic test status: $STATUS"
         if [ "$STATUS" != "passed" ]; then
