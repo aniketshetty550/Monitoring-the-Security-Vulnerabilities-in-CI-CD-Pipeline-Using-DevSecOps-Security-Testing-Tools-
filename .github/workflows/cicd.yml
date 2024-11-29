@@ -126,11 +126,16 @@ jobs:
  
     - name: Configure Datadog Agent for Production
       run: |-
-        echo "env: production" >> /etc/datadog-agent/datadog.yaml
-        echo "tags:" >> /etc/datadog-agent/datadog.yaml
-        echo "  - env:production" >> /etc/datadog-agent/datadog.yaml
-        echo "  - service:dvwa" >> /etc/datadog-agent/datadog.yaml
-        systemctl restart datadog-agent
+        # echo "env: production" >> /etc/datadog-agent/datadog.yaml
+        # echo "tags:" >> /etc/datadog-agent/datadog.yaml
+        # echo "  - env:production" >> /etc/datadog-agent/datadog.yaml
+        # echo "  - service:dvwa" >> /etc/datadog-agent/datadog.yaml
+        # systemctl restart datadog-agent
+        sudo bash -c 'echo "env: production" >> /etc/datadog-agent/datadog.yaml'
+        sudo bash -c 'echo "tags:" >> /etc/datadog-agent/datadog.yaml'
+        sudo bash -c 'echo "  - env:production" >> /etc/datadog-agent/datadog.yaml'
+        sudo bash -c 'echo "  - service:dvwa" >> /etc/datadog-agent/datadog.yaml'
+        sudo systemctl restart datadog-agent
  
     # Send Deployment Event to Datadog
     - name: Notify Datadog About Deployment
