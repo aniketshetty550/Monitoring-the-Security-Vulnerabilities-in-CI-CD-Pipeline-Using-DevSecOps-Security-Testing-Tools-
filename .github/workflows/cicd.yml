@@ -71,14 +71,7 @@ jobs:
         docker build . --tag $GCR_IMAGE
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
-    # - name: Run Trivy vulnerability scanner
-    #   uses: aquasecurity/trivy-action@0.28.0
-    #   with:
-    #     image-ref: '${{ steps.build.outputs.image }}'
-    #     cache-dir: '/var/lib/trivy'
-    #     exit-code: '0'
-    #     severity: 'MEDIUM,HIGH,CRITICAL'
-      #Push the Docker image to Google Container Registry
+    
     - name: Deploy to Cloud Run
       run: |-
         # Set project ID and region
@@ -91,13 +84,6 @@ jobs:
           --platform managed \
           --allow-unauthenticated
     
-    # - name: Deploy to Cloud Run
-    #   run: |-
-    #     gcloud config set project $PROJECT_ID
-    #     gcloud config set run/region us-central1
-    #     gcloud run deploy $IMAGE --image=${{ steps.build.outputs.image }} \
-    #     --platform managed \
-    #     --allow-unauthenticated
     - name: snyk test
       continue-on-error: true
       run: |-
@@ -123,8 +109,15 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Run Datadog Synthetic tests
-      uses: DataDog/synthetics-ci-github-action@v1.14.1
-      with:
-          api_key: 6a0de792d3a4ac8a13d59081bfc113e3
-          app_key: 96a885f65517549bd73aa52e829a1f67972c1faa
+      # uses: DataDog/synthetics-ci-github-action@v1.14.1
+      # with:
+      #     api_key: 6a0de792d3a4ac8a13d59081bfc113e3
+      #     app_key: 96a885f65517549bd73aa52e829a1f67972c1faa
+      run: |-
+        # Replace with your synthetic test ID
+        TEST_ID="w5w-x49-hpg"
+        API_KEY="6a0de792d3a4ac8a13d59081bfc113e3"
+        curl -X POST "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/run" \
+        -H "Content-Type: application/json" \
+        -H "DD-API-KEY: $API_KEY"
 
