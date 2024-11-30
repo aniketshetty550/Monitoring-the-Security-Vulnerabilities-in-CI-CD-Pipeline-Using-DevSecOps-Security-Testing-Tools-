@@ -123,34 +123,14 @@ jobs:
     #      -H "DD-APPLICATION-KEY: 96a885f65517549bd73aa52e829a1f67972c1faa" \
     #      "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/trigger"
 
-    - name: Run Synthetic Tests
-      run: |-
-        TEST_NAME="[Synthetics] Test on vuln-image-77572195473.us-central1.run.app"
-        API_KEY=6a0de792d3a4ac8a13d59081bfc113e3
- 
-        # Fetch the test ID dynamically
-        RESPONSE=$(curl -s -X GET "https://api.datadoghq.com/api/v1/synthetics/tests" \
-          -H "Content-Type: application/json" \
-          -H "DD-API-KEY: $API_KEY")
- 
-        if [ -z "$RESPONSE" ]; then
-          echo "Error: No response from DataDog API."
-          exit 1
-        fi
- 
-        TEST_ID=$(echo "$RESPONSE" | jq -r ".tests[] | select(.name == \"$TEST_NAME\") | .public_id")
- 
-        if [ -z "$TEST_ID" ]; then
-          echo "Error: Could not resolve the test ID for \"$TEST_NAME\". Check the test name and API key."
-          exit 1
-        fi
- 
-        echo "Resolved Test ID: $TEST_ID"
- 
-        # Trigger the test
-        TRIGGER_RESPONSE=$(curl -s -X POST "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/trigger" \
-          -H "Content-Type: application/json" \
-          -H "DD-API-KEY: $API_KEY")
- 
-        echo "Trigger Response: $TRIGGER_RESPONSE"
-
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Check code meets quality and security standards
+      id: datadog-static-analysis
+      uses: DataDog/datadog-static-analyzer-github-action@v1
+      with:
+        dd_api_key: 6a0de792d3a4ac8a13d59081bfc113e3
+        dd_app_key: 96a885f65517549bd73aa52e829a1f67972c1faa
+        # dd_env: ci
+        dd_site: us5.datadoghq.com
+        cpu_count: 2
