@@ -126,7 +126,7 @@ jobs:
     - name: Run Synthetic Tests
       run: |-
         TEST_NAME="[Synthetics] Test on vuln-image-77572195473.us-central1.run.app"
-        API_KEY="6a0de792d3a4ac8a13d59081bfc113e3"
+        API_KEY=6a0de792d3a4ac8a13d59081bfc113e3
  
         # Fetch the test ID dynamically
         RESPONSE=$(curl -s -X GET "https://api.datadoghq.com/api/v1/synthetics/tests" \
