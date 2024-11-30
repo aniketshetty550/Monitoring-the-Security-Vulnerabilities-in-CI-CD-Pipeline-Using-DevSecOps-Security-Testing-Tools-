@@ -119,48 +119,11 @@ jobs:
       with:
         apiKey: hawk.5dbJjP5atUA823whAcFb.ZdhsXAaXtkIlq6lodfhH
 
-    - name: Send Deployment Event to DataDog
-      run: |-
-        curl -X POST "https://api.datadoghq.com/api/v1/events" \
-        -H "Content-Type: application/json" \
-        -H "DD-API-KEY:6a0de792d3a4ac8a13d59081bfc113e3" \
-        -d '{
-          "title": "Deployed DVWA to Cloud Run",
-          "text": "DVWA was deployed successfully to Cloud Run.",
-          "priority": "normal",
-          "tags": ["env:production", "service:dvwa"],
-          "alert_type": "info"
-        }'
- 
-    - name: Run Synthetic Tests
-      run: |-
-        # Replace with your synthetic test ID
-        TEST_ID="w5w-x49-hpg"
-        API_KEY="6a0de792d3a4ac8a13d59081bfc113e3"
-        curl -X POST "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/run" \
-        -H "Content-Type: application/json" \
-        -H "DD-API-KEY: $API_KEY"
- 
-    - name: Check Synthetic Test Results
-      run: |-
-        # Check the status of the synthetic tests
-        TEST_NAME="[Synthetics] Test on vuln-image-77572195473.us-central1.run.app"
-        API_KEY="6a0de792d3a4ac8a13d59081bfc113e3"
-        TEST_ID=$(curl -s -X GET "https://api.datadoghq.com/api/v1/synthetics/tests" \
-          -H "Content-Type: application/json" \
-          -H "DD-API-KEY: $API_KEY" | jq -r ".tests[] | select(.name == \"$TEST_NAME\") | .public_id")
-          echo "Resolved Test ID: $TEST_ID"
-          echo "Synthetic test status: $STATUS"
-            if [ "$STATUS" != "passed" ]; then
-              echo "Synthetic tests failed."
-              exit 1
-            fi
- 
-    - name: Upload DataDog Metrics
-      uses: actions/upload-artifact@v3
+    - name: Checkout Synthetic tests
+      uses: actions/checkout@v3
+
+    - name: Run Datadog Synthetic tests
+      uses: DataDog/synthetics-ci-github-action@v1.14.1
       with:
-        name: DataDogMetrics
-        path: /var/log/datadog/
-
-
-    
+        api_key: 6a0de792d3a4ac8a13d59081bfc113e3
+        app_key: 96a885f65517549bd73aa52e829a1f67972c1faa
