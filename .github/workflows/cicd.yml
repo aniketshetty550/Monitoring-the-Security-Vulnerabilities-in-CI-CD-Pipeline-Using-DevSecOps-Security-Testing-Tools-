@@ -108,18 +108,49 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Run Datadog Synthetic tests
-      # uses: DataDog/synthetics-ci-github-action@v1.14.1
-      # with:
-      #     api_key: 6a0de792d3a4ac8a13d59081bfc113e3
-      #     app_key: 96a885f65517549bd73aa52e829a1f67972c1faa
+    # - name: Run Datadog Synthetic tests
+    #   # uses: DataDog/synthetics-ci-github-action@v1.14.1
+    #   # with:
+    #   #     api_key: 6a0de792d3a4ac8a13d59081bfc113e3
+    #   #     app_key: 96a885f65517549bd73aa52e829a1f67972c1faa
+    #   run: |-
+    #     # Replace with your synthetic test ID
+    #     TEST_ID="w5w-x49-hpg"
+    #     API_KEY=6a0de792d3a4ac8a13d59081bfc113e3
+    #     APP_KEY=96a885f65517549bd73aa52e829a1f67972c1faa
+    #     curl -X POST \
+    #      -H "DD-API-KEY: 6a0de792d3a4ac8a13d59081bfc113e3" \
+    #      -H "DD-APPLICATION-KEY: 96a885f65517549bd73aa52e829a1f67972c1faa" \
+    #      "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/trigger"
+
+    - name: Run Synthetic Tests
       run: |-
-        # Replace with your synthetic test ID
-        TEST_ID="w5w-x49-hpg"
-        API_KEY=6a0de792d3a4ac8a13d59081bfc113e3
-        APP_KEY=96a885f65517549bd73aa52e829a1f67972c1faa
-        curl -X POST \
-         -H "DD-API-KEY: 6a0de792d3a4ac8a13d59081bfc113e3" \
-         -H "DD-APPLICATION-KEY: 96a885f65517549bd73aa52e829a1f67972c1faa" \
-         "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/trigger"
+        TEST_NAME="[Synthetics] Test on vuln-image-77572195473.us-central1.run.app"
+        API_KEY="6a0de792d3a4ac8a13d59081bfc113e3"
+ 
+        # Fetch the test ID dynamically
+        RESPONSE=$(curl -s -X GET "https://api.datadoghq.com/api/v1/synthetics/tests" \
+          -H "Content-Type: application/json" \
+          -H "DD-API-KEY: $API_KEY")
+ 
+        if [ -z "$RESPONSE" ]; then
+          echo "Error: No response from DataDog API."
+          exit 1
+        fi
+ 
+        TEST_ID=$(echo "$RESPONSE" | jq -r ".tests[] | select(.name == \"$TEST_NAME\") | .public_id")
+ 
+        if [ -z "$TEST_ID" ]; then
+          echo "Error: Could not resolve the test ID for \"$TEST_NAME\". Check the test name and API key."
+          exit 1
+        fi
+ 
+        echo "Resolved Test ID: $TEST_ID"
+ 
+        # Trigger the test
+        TRIGGER_RESPONSE=$(curl -s -X POST "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/trigger" \
+          -H "Content-Type: application/json" \
+          -H "DD-API-KEY: $API_KEY")
+ 
+        echo "Trigger Response: $TRIGGER_RESPONSE"
 
