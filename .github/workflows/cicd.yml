@@ -123,7 +123,7 @@ jobs:
       run: |-
         curl -X POST "https://api.datadoghq.com/api/v1/events" \
         -H "Content-Type: application/json" \
-        -H "DD-API-KEY: ce3cd01cc0cc4170b3159c2fe1a1d3b1" \
+        -H "DD-API-KEY:6a0de792d3a4ac8a13d59081bfc113e3" \
         -d '{
           "title": "Deployed DVWA to Cloud Run",
           "text": "DVWA was deployed successfully to Cloud Run.",
@@ -136,7 +136,7 @@ jobs:
       run: |-
         # Replace with your synthetic test ID
         TEST_ID="w5w-x49-hpg"
-        API_KEY="ce3cd01cc0cc4170b3159c2fe1a1d3b1"
+        API_KEY="6a0de792d3a4ac8a13d59081bfc113e3"
         curl -X POST "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/run" \
         -H "Content-Type: application/json" \
         -H "DD-API-KEY: $API_KEY"
@@ -145,7 +145,7 @@ jobs:
       run: |-
         # Check the status of the synthetic tests
         TEST_ID="w5w-x49-hpg"
-        API_KEY="ce3cd01cc0cc4170b3159c2fe1a1d3b1"
+        API_KEY="6a0de792d3a4ac8a13d59081bfc113e3"
         STATUS=$(curl -s "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/results" \
           -H "DD-API-KEY: $API_KEY" | jq -r '.results[0].status')
         echo "Synthetic test status: $STATUS"
