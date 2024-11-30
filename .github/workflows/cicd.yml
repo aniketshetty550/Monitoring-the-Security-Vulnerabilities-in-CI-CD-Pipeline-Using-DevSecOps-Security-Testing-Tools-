@@ -119,3 +119,12 @@ jobs:
       with:
         apiKey: hawk.5dbJjP5atUA823whAcFb.ZdhsXAaXtkIlq6lodfhH
 
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Run Datadog Synthetic tests
+      uses: DataDog/synthetics-ci-github-action@v1.14.1
+      with:
+          api_key: 6a0de792d3a4ac8a13d59081bfc113e3
+          app_key: 96a885f65517549bd73aa52e829a1f67972c1faa
+
