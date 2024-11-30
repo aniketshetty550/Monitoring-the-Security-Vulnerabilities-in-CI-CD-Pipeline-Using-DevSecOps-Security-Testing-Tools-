@@ -14,6 +14,7 @@ env:
   PROFILE: prod
   # WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
   # WIF_SA: ${{ secrets.WIF_SA_ACADEMY}}
+  DATADOG_API_KEY: ce3cd01cc0cc4170b3159c2fe1a1d3b1
 
 jobs:
   setup-build-publish-deploy:
@@ -117,4 +118,47 @@ jobs:
       uses: stackhawk/hawkscan-action@v2.2.0
       with:
         apiKey: hawk.5dbJjP5atUA823whAcFb.ZdhsXAaXtkIlq6lodfhH
+
+    - name: Send Deployment Event to DataDog
+      run: |-
+        curl -X POST "https://api.datadoghq.com/api/v1/events" \
+        -H "Content-Type: application/json" \
+        -H "DD-API-KEY: ce3cd01cc0cc4170b3159c2fe1a1d3b1" \
+        -d '{
+          "title": "Deployed DVWA to Cloud Run",
+          "text": "DVWA was deployed successfully to Cloud Run.",
+          "priority": "normal",
+          "tags": ["env:production", "service:dvwa"],
+          "alert_type": "info"
+        }'
+ 
+    - name: Run Synthetic Tests
+      run: |-
+        # Replace with your synthetic test ID
+        TEST_ID="w5w-x49-hpg"
+        API_KEY="ce3cd01cc0cc4170b3159c2fe1a1d3b1"
+        curl -X POST "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/run" \
+        -H "Content-Type: application/json" \
+        -H "DD-API-KEY: $API_KEY"
+ 
+    - name: Check Synthetic Test Results
+      run: |-
+        # Check the status of the synthetic tests
+        TEST_ID="w5w-x49-hpg"
+        API_KEY="ce3cd01cc0cc4170b3159c2fe1a1d3b1"
+        STATUS=$(curl -s "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/results" \
+          -H "DD-API-KEY: $API_KEY" | jq -r '.results[0].status')
+        echo "Synthetic test status: $STATUS"
+        if [ "$STATUS" != "passed" ]; then
+          echo "Synthetic tests failed."
+          exit 1
+        fi
+ 
+    - name: Upload DataDog Metrics
+      uses: actions/upload-artifact@v3
+      with:
+        name: DataDogMetrics
+        path: /var/log/datadog/
+
+
     
