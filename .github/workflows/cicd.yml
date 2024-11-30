@@ -107,9 +107,18 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v3
-
+  
     - name: Run Datadog Synthetic tests
-      uses: DataDog/synthetics-ci-github-action@v1.14.1
-      with:
-          api_key: 6a0de792d3a4ac8a13d59081bfc113e3
-          app_key: 96a885f65517549bd73aa52e829a1f67972c1faa
+        # uses: DataDog/synthetics-ci-github-action@v1.14.1
+        # with:
+        #     api_key: 6a0de792d3a4ac8a13d59081bfc113e3
+        #     app_key: 96a885f65517549bd73aa52e829a1f67972c1faa
+      run: |-
+          # Replace with your synthetic test ID
+          TEST_ID="w5w-x49-hpg"
+          API_KEY=6a0de792d3a4ac8a13d59081bfc113e3
+          APP_KEY=96a885f65517549bd73aa52e829a1f67972c1faa
+          curl -X POST \
+           -H "DD-API-KEY: 6a0de792d3a4ac8a13d59081bfc113e3" \
+           -H "DD-APPLICATION-KEY: 96a885f65517549bd73aa52e829a1f67972c1faa" \
+           "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/trigger"
