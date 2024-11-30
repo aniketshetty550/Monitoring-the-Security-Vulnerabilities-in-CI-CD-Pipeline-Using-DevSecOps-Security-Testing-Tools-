@@ -135,8 +135,8 @@ jobs:
     - name: Run Synthetic Tests
       run: |-
         # Replace with your synthetic test ID
-        TEST_ID="w5w-x49-hpg"
-        API_KEY="6a0de792d3a4ac8a13d59081bfc113e3"
+        TEST_ID=w5w-x49-hpg
+        API_KEY=6a0de792d3a4ac8a13d59081bfc113e3
         curl -X POST "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/run" \
         -H "Content-Type: application/json" \
         -H "DD-API-KEY: $API_KEY"
