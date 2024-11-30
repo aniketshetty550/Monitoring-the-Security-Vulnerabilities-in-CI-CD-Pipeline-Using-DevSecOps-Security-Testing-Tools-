@@ -105,8 +105,8 @@ jobs:
       with:
         apiKey: hawk.5dbJjP5atUA823whAcFb.ZdhsXAaXtkIlq6lodfhH
 
-    - name: Checkout
-      uses: actions/checkout@v3
+    # - name: Checkout
+    #   uses: actions/checkout@v3
 
     # - name: Run Datadog Synthetic tests
     #   # uses: DataDog/synthetics-ci-github-action@v1.14.1
@@ -125,12 +125,13 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v3
+
     - name: Check code meets quality and security standards
       id: datadog-static-analysis
       uses: DataDog/datadog-static-analyzer-github-action@v1
       with:
         dd_api_key: 6a0de792d3a4ac8a13d59081bfc113e3
         dd_app_key: 96a885f65517549bd73aa52e829a1f67972c1faa
-        dd_env: ci
+        dd_env: production
         dd_site: us5.datadoghq.com
         cpu_count: 2
