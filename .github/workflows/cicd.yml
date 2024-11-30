@@ -144,15 +144,17 @@ jobs:
     - name: Check Synthetic Test Results
       run: |-
         # Check the status of the synthetic tests
-        TEST_ID="w5w-x49-hpg"
+        TEST_NAME="[Synthetics] Test on vuln-image-77572195473.us-central1.run.app"
         API_KEY="6a0de792d3a4ac8a13d59081bfc113e3"
-        STATUS=$(curl -s "https://api.datadoghq.com/api/v1/synthetics/tests/$TEST_ID/results" \
-          -H "DD-API-KEY: $API_KEY" | jq -r '.results[0].status')
-        echo "Synthetic test status: $STATUS"
-        if [ "$STATUS" != "passed" ]; then
-          echo "Synthetic tests failed."
-          exit 1
-        fi
+        TEST_ID=$(curl -s -X GET "https://api.datadoghq.com/api/v1/synthetics/tests" \
+          -H "Content-Type: application/json" \
+          -H "DD-API-KEY: $API_KEY" | jq -r ".tests[] | select(.name == \"$TEST_NAME\") | .public_id")
+          echo "Resolved Test ID: $TEST_ID"
+          echo "Synthetic test status: $STATUS"
+            if [ "$STATUS" != "passed" ]; then
+              echo "Synthetic tests failed."
+              exit 1
+            fi
  
     - name: Upload DataDog Metrics
       uses: actions/upload-artifact@v3
