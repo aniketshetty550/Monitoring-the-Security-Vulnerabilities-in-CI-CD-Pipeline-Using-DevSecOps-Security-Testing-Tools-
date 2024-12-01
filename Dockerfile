@@ -8,7 +8,7 @@ RUN cd AltoroJ && /opt/gradle/gradle-6.9.4/bin/gradle build
 RUN cp /usr/local/tomcat/AltoroJ/build/libs/altoromutual.war /usr/local/tomcat/webapps
 
 # Add the Datadog Java agent
-COPY /opt/datadog-packages/datadog-apm-library-java/1.43.0/dd-java-agent.jar /opt/datadog/dd-java-agent.jar
+ADD https://github.com/DataDog/dd-trace-java/releases/latest/download/dd-java-agent.jar /opt/datadog/dd-java-agent.jar
 
 # Set the Datadog Java agent in Tomcat
 ENV CATALINA_OPTS="-javaagent:/opt/datadog/dd-java-agent.jar -Ddd.iast.enabled=true -Ddd.service=vuln-image -Ddd.env=prod"
