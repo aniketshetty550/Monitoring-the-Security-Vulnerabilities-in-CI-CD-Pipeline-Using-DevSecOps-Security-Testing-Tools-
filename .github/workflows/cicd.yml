@@ -14,7 +14,7 @@ env:
   PROFILE: prod
   # WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
   # WIF_SA: ${{ secrets.WIF_SA_ACADEMY}}
-  DATADOG_API_KEY: 97980b005d2da6e9581f0ceb2d1621d5
+  DATADOG_API_KEY: 97980b005d2da6e9581f0ceb2d1621d5 
 
 jobs:
   setup-build-publish-deploy:
