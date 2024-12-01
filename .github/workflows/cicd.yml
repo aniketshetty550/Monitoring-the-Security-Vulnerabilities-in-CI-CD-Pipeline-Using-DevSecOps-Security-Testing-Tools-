@@ -67,6 +67,15 @@ jobs:
       run: |-
         gcloud auth configure-docker \
           europe-docker.pkg.dev
+        export DD_API_KEY=97980b005d2da6e9581f0ceb2d1621d5
+        export DD_SITE=https://app.datadoghq.com
+        export DD_APM_ENABLED=true   
+        export DD_IAST_ENABLED=true   
+        export DD_ENV=prod       
+        export DD_APM_NON_LOCAL_TRAFFIC=true  
+        export DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true   
+        export DD_APM_RECEIVER_SOCKET=/opt/datadog/apm/inject/run/apm.socket
+        export DD_DOGSTATSD_SOCKET=/opt/datadog/apm/inject/run/dsd.socket
         GCR_IMAGE=us-central1-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest
         docker build . --tag $GCR_IMAGE
         docker push $GCR_IMAGE
