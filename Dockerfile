@@ -18,7 +18,7 @@ ENV DD_SITE="datadoghq.com"
 ADD https://github.com/DataDog/dd-trace-java/releases/latest/download/dd-java-agent.jar /opt/datadog/dd-java-agent.jar
 
 # Set the Datadog Java agent in Tomcat
-ENV CATALINA_OPTS="-javaagent:/opt/datadog/dd-java-agent.jar -Ddd.iast.enabled=true -Ddd.service=vuln-image -Ddd.env=prod"
+ENV CATALINA_OPTS="-javaagent:/opt/datadog/dd-java-agent.jar -Ddd.iast.enabled=true -Ddd.service=vuln-image -Ddd.env=prod -Ddd.trace.debug=true -Ddd.tags=env:staging,app:altoro" 
 
 # Set additional environment variables for Datadog
 ENV DD_ENV=prod
