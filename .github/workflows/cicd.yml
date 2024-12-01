@@ -115,7 +115,7 @@ jobs:
         #     app_key: 96a885f65517549bd73aa52e829a1f67972c1faa
       run: |-
           # Replace with your synthetic test ID
-          TEST_ID="w5w-x49-hpg"
+          TEST_ID="caw-skc-unb"
           API_KEY=97980b005d2da6e9581f0ceb2d1621d5
           APP_KEY=96a885f65517549bd73aa52e829a1f67972c1faa
           curl -X POST \
