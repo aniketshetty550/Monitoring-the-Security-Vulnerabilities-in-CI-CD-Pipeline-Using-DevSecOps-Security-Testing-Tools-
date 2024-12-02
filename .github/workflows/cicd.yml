@@ -9,7 +9,7 @@ on:
 name: cloudrun-deploy and security scanning
 
 env:
-  PROJECT_ID: absolute-advice-442515-h8
+  PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   IMAGE: vuln-image
   PROFILE: prod
   # WIF_PROVIDER: ${{ secrets.WIF_PROVIDER }}
@@ -31,7 +31,7 @@ jobs:
     # Setup gcloud CLI.
     - uses: google-github-actions/setup-gcloud@v2
       with:
-          project_id: absolute-advice-442515-h8
+          project_id: ${{ secrets.GCP_PROJECT }}
           #service_account_key: ${{ secrets.GCP_SA_KEY_PROD }}
           #export_default_credentials: true
      # Configure Workload Identity Federation via a credentials file
