@@ -68,7 +68,7 @@ jobs:
         gcloud auth configure-docker \
           europe-docker.pkg.dev
         export DD_API_KEY=97980b005d2da6e9581f0ceb2d1621d5
-        export DD_SITE="datadoghq.com"
+        export DD_SITE="datadoghq.eu"
         export DD_APM_ENABLED=true   
         export DD_IAST_ENABLED=true   
         export DD_ENV=prod       

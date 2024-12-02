@@ -12,7 +12,7 @@ RUN DD_IAST_ENABLED=true DD_APM_INSTRUMENTATION_ENABLED=docker DD_NO_AGENT_INSTA
 
 # Set the Datadog API Key and Site for the agent
 ENV DD_API_KEY=97980b005d2da6e9581f0ceb2d1621d5
-ENV DD_SITE="datadoghq.com"
+ENV DD_SITE="datadoghq.eu"
 
 # Add the Datadog Java agent
 ADD https://github.com/DataDog/dd-trace-java/releases/latest/download/dd-java-agent.jar /opt/datadog/dd-java-agent.jar
