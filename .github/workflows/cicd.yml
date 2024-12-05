@@ -80,6 +80,13 @@ jobs:
         docker build . --tag $GCR_IMAGE
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
+      
+    - name: snyk test
+      continue-on-error: true
+      run: |-
+          npm install snyk -g 
+          snyk auth 5db83b3a-a352-480d-9a97-e7a7af955133
+          snyk code test
     
     - name: Deploy to Cloud Run
       run: |-
@@ -93,12 +100,7 @@ jobs:
           --platform managed \
           --allow-unauthenticated
     
-    - name: snyk test
-      continue-on-error: true
-      run: |-
-        npm install snyk -g 
-        snyk auth 5db83b3a-a352-480d-9a97-e7a7af955133
-        snyk code test
+    
         # Ensure Java 17 is installed for HawkScan
     - name: Set up Java 17
       uses: actions/setup-java@v3
