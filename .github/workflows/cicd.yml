@@ -12,6 +12,7 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
   IMAGE: vuln-image
   PROFILE: prod
+  DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
 
 jobs:
   setup-build-publish-deploy:
@@ -99,3 +100,15 @@ jobs:
       uses: stackhawk/hawkscan-action@v2.2.0
       with:
         apiKey: ${{ secrets.HAWKSCAN_API_KEY }}
+
+    - name: Test Datadog Integration
+      run: |
+         curl -X POST "https://http-intake.logs.datadoghq.com/v1/input" \
+          -H "DD-API-KEY: $DD_API_KEY" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "message": "Test log from GitHub Actions",
+            "service": "altoro-mutual",
+            "env": "prod",
+            "version": "1.0.0"
+          }'
