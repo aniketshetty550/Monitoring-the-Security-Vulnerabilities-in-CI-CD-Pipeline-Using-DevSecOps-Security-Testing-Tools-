@@ -55,6 +55,7 @@ jobs:
         gcloud auth configure-docker us-central1-docker.pkg.dev
         gcloud components install docker-credential-gcr
         gcloud --quiet auth configure-docker
+
     - name: Generate build ID
       id: prep
       run: |
@@ -62,24 +63,16 @@ jobs:
           sha=${GITHUB_SHA::8}
           ts=$(date +%Y%m%d%H%M%S)
           echo "::set-output name=BUILD_ID::${env}-${ts}-${sha}"
+
     - name: Build docker
       id: build
       run: |-
-        gcloud auth configure-docker \
-          europe-docker.pkg.dev
-        export DD_API_KEY=97980b005d2da6e9581f0ceb2d1621d5
-        export DD_SITE="datadoghq.com"
-        export DD_APM_ENABLED=true   
-        export DD_IAST_ENABLED=true   
-        export DD_ENV=prod       
-        export DD_APM_NON_LOCAL_TRAFFIC=true  
-        export DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true   
-        export DD_APM_RECEIVER_SOCKET=/opt/datadog/apm/inject/run/apm.socket
-        export DD_DOGSTATSD_SOCKET=/opt/datadog/apm/inject/run/dsd.socket
-        GCR_IMAGE=us-central1-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest
-        docker build . --tag $GCR_IMAGE
-        docker push $GCR_IMAGE
-        echo "::set-output name=image::$GCR_IMAGE"
+            gcloud auth configure-docker \
+              europe-docker.pkg.dev
+            GCR_IMAGE=us-central1-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest
+            docker build . --tag $GCR_IMAGE
+            docker push $GCR_IMAGE
+            echo "::set-output name=image::$GCR_IMAGE"
       
     - name: snyk test
       continue-on-error: true
