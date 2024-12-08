@@ -14,18 +14,12 @@ env:
   PROFILE: prod
 
 jobs:
-  setup:
-    name: Setup Environment
+  full_pipeline:
+    name: Full Pipeline
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
-
-    - name: Save Repository as Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: repository-files
-        path: .
 
     - name: Setup gcloud CLI
       uses: google-github-actions/setup-gcloud@v2
@@ -45,16 +39,6 @@ jobs:
         gcloud auth configure-docker europe-docker.pkg.dev --quiet
         gcloud components install docker-credential-gcr --quiet
 
-  build:
-    name: Build Docker Image
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-    - name: Download Repository Artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: repository-files
-        
     - name: Generate Build ID
       id: prep
       run: |
@@ -65,7 +49,6 @@ jobs:
 
     - name: Debug Directory
       run: ls -al
-      # Ensures the Dockerfile is present in the working directory
 
     - name: Build and Push Docker Image
       id: build
@@ -76,15 +59,6 @@ jobs:
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
 
-  security_scan:
-    name: Security Scanning
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - name: Download Repository Artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: repository-files
     - name: Run Snyk Test
       continue-on-error: true
       run: |-
@@ -92,15 +66,6 @@ jobs:
         snyk auth 5db83b3a-a352-480d-9a97-e7a7af955133
         snyk code test
 
-  deploy:
-    name: Deploy to Cloud Run
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - name: Download Repository Artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: repository-files
     - name: Deploy to Cloud Run
       run: |-
         gcloud config set project $PROJECT_ID
@@ -110,15 +75,6 @@ jobs:
           --platform managed \
           --allow-unauthenticated
 
-  post_deploy_security:
-    name: Post-Deploy Security Scanning
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-    - name: Download Repository Artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: repository-files
     - name: Set Up Java 17
       uses: actions/setup-java@v3
       with:
@@ -131,4 +87,4 @@ jobs:
     - name: Run HawkScan
       uses: stackhawk/hawkscan-action@v2.2.0
       with:
-        apiKey: hawk.5dbJjP5atUA823whAcFb.ZdhsXAaXtkIlq6lodfhH
+        apiKey: hawk.5db83b3a-a352-480d-9a97-e7a7af955133
