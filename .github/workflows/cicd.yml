@@ -32,8 +32,8 @@ jobs:
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-    - id: Configure gcloud
-      name: Configure gcloud CLI
+    - id: configure_gcloud
+      name: configure_gcloud CLI
       run: |-
         gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
         gcloud auth configure-docker us-central1-docker.pkg.dev
