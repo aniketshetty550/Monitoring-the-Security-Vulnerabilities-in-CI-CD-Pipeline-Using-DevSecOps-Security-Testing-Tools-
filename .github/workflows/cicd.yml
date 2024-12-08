@@ -33,12 +33,11 @@ jobs:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
     - id: configure_gcloud
-      name: configure_gcloud CLI
+      name: Configure gcloud CLI
       run: |-
         gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
-        gcloud auth configure-docker us-central1-docker.pkg.dev
-        gcloud components install docker-credential-gcr
-        gcloud --quiet auth configure-docker
+        gcloud auth configure-docker europe-docker.pkg.dev --quiet
+        gcloud components install docker-credential-gcr --quiet
 
   build:
     name: Build Docker Image
@@ -53,13 +52,16 @@ jobs:
         ts=$(date +%Y%m%d%H%M%S)
         echo "::set-output name=BUILD_ID::${env}-${ts}-${sha}"
 
+    - name: Debug Directory
+      run: ls -al
+      # Ensures the Dockerfile is present in the working directory
+
     - name: Build and Push Docker Image
       id: build
       run: |-
-        gcloud auth configure-docker \
-          europe-docker.pkg.dev
+        gcloud auth configure-docker europe-docker.pkg.dev --quiet
         GCR_IMAGE=us-central1-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest
-        docker build . --tag $GCR_IMAGE
+        docker build -f Dockerfile . --tag $GCR_IMAGE
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
 
