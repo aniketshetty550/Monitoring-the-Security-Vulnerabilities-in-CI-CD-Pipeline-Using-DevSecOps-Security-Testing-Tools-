@@ -53,7 +53,7 @@ jobs:
     - name: Build and Push Docker Image
       id: build
       run: |-
-        gcloud auth configure-docker europe-docker.pkg.dev --quiet
+        gcloud auth configure-docker europe-docker.pkg.dev
         GCR_IMAGE=us-central1-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest
         docker build -f Dockerfile . --tag $GCR_IMAGE
         docker push $GCR_IMAGE
