@@ -14,31 +14,39 @@ env:
   PROFILE: prod
 
 jobs:
-  full_pipeline:
-    name: Full Pipeline
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Code
+    - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Setup gcloud CLI
-      uses: google-github-actions/setup-gcloud@v2
+    # Setup gcloud CLI.
+    - uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: ${{ secrets.GCP_PROJECT }}
 
+    # Authenticate using the created credentials file.
     - name: Google Auth
       id: auth
       uses: google-github-actions/auth@v2
       with:
         credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-    - id: configure_gcloud
+    # Configure gcloud CLI
+    - id: gcloud
       name: Configure gcloud CLI
       run: |-
         gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
-        gcloud auth configure-docker europe-docker.pkg.dev --quiet
-        gcloud components install docker-credential-gcr --quiet
+        gcloud auth configure-docker us-central1-docker.pkg.dev
+        gcloud components install docker-credential-gcr
+        gcloud --quiet auth configure-docker
 
+    # Generate Build ID
     - name: Generate Build ID
       id: prep
       run: |
@@ -47,18 +55,17 @@ jobs:
         ts=$(date +%Y%m%d%H%M%S)
         echo "::set-output name=BUILD_ID::${env}-${ts}-${sha}"
 
-    - name: Debug Directory
-      run: ls -al
-
+    # Build and Push Docker Image
     - name: Build and Push Docker Image
       id: build
       run: |-
         gcloud auth configure-docker europe-docker.pkg.dev
-        GCR_IMAGE=us-central1-docker.pkg.dev/absolute-advice-442515-h8/docker-repo/dvwa:latest
-        docker build -f Dockerfile . --tag $GCR_IMAGE
+        GCR_IMAGE=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/docker-repo/dvwa:latest
+        docker build . --tag $GCR_IMAGE
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
 
+    # Run Snyk Test
     - name: Run Snyk Test
       continue-on-error: true
       run: |-
@@ -66,6 +73,7 @@ jobs:
         snyk auth 5db83b3a-a352-480d-9a97-e7a7af955133
         snyk code test
 
+    # Deploy to Cloud Run
     - name: Deploy to Cloud Run
       run: |-
         gcloud config set project $PROJECT_ID
@@ -75,7 +83,8 @@ jobs:
           --platform managed \
           --allow-unauthenticated
 
-    - name: Set Up Java 17
+    # Set up Java 17 for HawkScan
+    - name: Set up Java 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
@@ -84,7 +93,8 @@ jobs:
     - name: Check Java Version
       run: java -version
 
+    # Run HawkScan
     - name: Run HawkScan
       uses: stackhawk/hawkscan-action@v2.2.0
       with:
-        apiKey: hawk.5db83b3a-a352-480d-9a97-e7a7af955133
+        apiKey: hawk.5dbJjP5atUA823whAcFb.ZdhsXAaXtkIlq6lodfhH
