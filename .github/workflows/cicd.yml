@@ -103,7 +103,7 @@ jobs:
 
     - name: Test Datadog Integration
       run: |
-         curl -X POST "https://http-intake.logs.datadoghq.com/v1/input" \
+         curl -X POST "https://http-intake.logs.datadoghq.eu/v1/input" \
           -H "DD-API-KEY: $DD_API_KEY" \
           -H "Content-Type: application/json" \
           -d '{
