@@ -29,11 +29,11 @@ ENV DD_LOGS_INJECTION=true
 ENV DD_APPSEC_ENABLED=true
 ENV DD_IAST_ENABLED=true
 ENV DD_APPSEC_SCA_ENABLED=true
-
+ENV DD_SITE datadoghq.eu
 # Unified Service Tagging Labels
-LABEL com.datadoghq.tags.service="altoro-mutual"
-LABEL com.datadoghq.tags.env="prod"
-LABEL com.datadoghq.tags.version="1.0.0"
+LABEL eu.datadoghq.tags.service="altoro-mutual"
+LABEL eu.datadoghq.tags.env="prod"
+LABEL eu.datadoghq.tags.version="1.0.0"
 
 # Expose port 8080
 EXPOSE 8080
