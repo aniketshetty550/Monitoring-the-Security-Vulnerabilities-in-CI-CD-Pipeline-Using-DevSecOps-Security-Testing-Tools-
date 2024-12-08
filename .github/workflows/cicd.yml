@@ -85,6 +85,15 @@ jobs:
           --image=${{ steps.build.outputs.image }} \
           --platform managed \
           --allow-unauthenticated
+        # Test if Datadog Agent is running
+    - name: Check Datadog Agent State
+      run: |
+        curl -s --unix-socket /var/run/datadog/apm.socket http://localhost/info | jq
+      env:
+        DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+        DD_AGENT_HOST: localhost
+        DD_TRACE_AGENT_PORT: 8126
+        DD_LOG_LEVEL: debug
 
     - name: Test Datadog Integration (EU)
       run: |
