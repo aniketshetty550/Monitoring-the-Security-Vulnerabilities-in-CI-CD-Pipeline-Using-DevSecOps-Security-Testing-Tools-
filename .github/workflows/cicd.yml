@@ -60,7 +60,7 @@ jobs:
       id: build
       run: |-
         gcloud auth configure-docker europe-docker.pkg.dev
-        GCR_IMAGE=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/docker-repo/dvwa:latest
+        GCR_IMAGE=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/docker-repo/vuln-image:latest
         docker build . --tag $GCR_IMAGE
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
@@ -70,7 +70,7 @@ jobs:
       continue-on-error: true
       run: |-
         npm install snyk -g
-        snyk auth 5db83b3a-a352-480d-9a97-e7a7af955133
+        snyk auth ${{ secrets.SNYK_TOKEN }}
         snyk code test
 
     # Deploy to Cloud Run
@@ -82,24 +82,6 @@ jobs:
           --image=${{ steps.build.outputs.image }} \
           --platform managed \
           --allow-unauthenticated
-
-    # Datadog APM: Configure Agent
-    - name: Start Datadog Agent
-      run: |
-        docker run -d -v /var/run/docker.sock:/var/run/docker.sock:ro \
-          -v /proc/:/host/proc/:ro \
-          -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro \
-          -p 127.0.0.1:8126:8126/tcp \
-          -e DD_API_KEY=${{ secrets.DATADOG_API_KEY }} \
-          -e DD_SITE="datadoghq.eu" \
-          datadog/agent:latest
-
-    # Set up Git Metadata for Datadog
-    - name: Extract Git Metadata
-      id: git
-      run: |
-        echo "DD_GIT_COMMIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
-        echo "DD_GIT_REPOSITORY_URL=$(git config --get remote.origin.url)" >> $GITHUB_ENV
 
     # Set up Java 17 for HawkScan
     - name: Set up Java 17
@@ -115,4 +97,4 @@ jobs:
     - name: Run HawkScan
       uses: stackhawk/hawkscan-action@v2.2.0
       with:
-        apiKey: hawk.5dbJjP5atUA823whAcFb.ZdhsXAaXtkIlq6lodfhH
+        apiKey: ${{ secrets.HAWKSCAN_API_KEY }}
