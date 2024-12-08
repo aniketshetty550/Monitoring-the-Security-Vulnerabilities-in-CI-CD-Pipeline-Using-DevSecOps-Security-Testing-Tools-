@@ -20,7 +20,7 @@ RUN cp AltoroJ/build/libs/altoromutual.war /usr/local/tomcat/webapps/
 # Download the Datadog Java Agent
 ADD 'https://dtdg.co/latest-java-tracer' /dd-java-agent.jar
 
-# Set default environment variables for Datadog
+# Unified Service Tagging Environment Variables
 ENV DD_SERVICE=altoro-mutual
 ENV DD_ENV=prod
 ENV DD_VERSION=1.0.0
@@ -29,6 +29,11 @@ ENV DD_LOGS_INJECTION=true
 ENV DD_APPSEC_ENABLED=true
 ENV DD_IAST_ENABLED=true
 ENV DD_APPSEC_SCA_ENABLED=true
+
+# Unified Service Tagging Labels
+LABEL com.datadoghq.tags.service="altoro-mutual"
+LABEL com.datadoghq.tags.env="prod"
+LABEL com.datadoghq.tags.version="1.0.0"
 
 # Expose port 8080
 EXPOSE 8080
