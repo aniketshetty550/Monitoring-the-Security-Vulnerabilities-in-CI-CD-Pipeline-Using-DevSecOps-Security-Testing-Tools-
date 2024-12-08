@@ -67,19 +67,7 @@ jobs:
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
 
-    - name: Test Datadog Integration (EU)
-      run: |
-         curl -X POST "https://http-intake.logs.datadoghq.eu/v1/input" \
-         -H "DD-API-KEY: $DD_API_KEY" \
-         -H "Content-Type: application/json" \
-         --http1.1 \
-         -d '{
-           "message": "Test log from GitHub Actions",
-           "service": "altoro-mutual",
-           "env": "prod",
-           "version": "1.0.0"
-         }'
-
+    
     # Run Snyk Test
     - name: Run Snyk Test
       continue-on-error: true
@@ -97,6 +85,20 @@ jobs:
           --image=${{ steps.build.outputs.image }} \
           --platform managed \
           --allow-unauthenticated
+
+    - name: Test Datadog Integration (EU)
+      run: |
+         curl -X POST "https://http-intake.logs.datadoghq.eu/v1/input" \
+         -H "DD-API-KEY: $DD_API_KEY" \
+         -H "Content-Type: application/json" \
+         --http1.1 \
+         -d '{
+           "message": "Test log from GitHub Actions",
+           "service": "altoro-mutual",
+           "env": "prod",
+           "version": "1.0.0"
+         }'
+
 
     # Set up Java 17 for HawkScan
     - name: Set up Java 17
