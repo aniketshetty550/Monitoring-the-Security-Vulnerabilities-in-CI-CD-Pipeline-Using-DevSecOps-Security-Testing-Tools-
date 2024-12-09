@@ -13,6 +13,8 @@ env:
   IMAGE: vuln-image
   PROFILE: prod
   DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+  DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY }}
+  SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
 jobs:
   setup-build-publish-deploy:
@@ -25,7 +27,6 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-
 
     # Authenticate using the created credentials file.
     - name: Google Auth
@@ -63,18 +64,38 @@ jobs:
       run: |-
         gcloud auth configure-docker europe-docker.pkg.dev
         GCR_IMAGE=us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/docker-repo/vuln-image:latest
-        docker build . -t altoro-mutual --build-arg DD_GIT_REPOSITORY_URL=$(git config --get remote.origin.url) --build-arg DD_GIT_COMMIT_SHA=$(git rev-parse HEAD) --tag $GCR_IMAGE
+        docker build . -t altoro-mutual \
+          --build-arg DD_GIT_REPOSITORY_URL=$(git config --get remote.origin.url) \
+          --build-arg DD_GIT_COMMIT_SHA=$(git rev-parse HEAD) \
+          --tag $GCR_IMAGE
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
 
-    
-    # Run Snyk Test
-    - name: Run Snyk Test
-      continue-on-error: true
+    # Compute Dependency Graph using Snyk
+    - name: Compute Dependency Graph
       run: |-
-        npm install snyk -g
-        snyk auth ${{ secrets.SNYK_TOKEN }}
-        snyk code test
+        docker run -e "SNYK_TOKEN=${{ secrets.SNYK_TOKEN }}" \
+          -v "$PWD:/project" snyk/snyk-cli:gradle-5.4 \
+          test --print-deps --file=AltoroJ/build.gradle
+      continue-on-error: true
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+    - name: Display Snyk Dependency Graph Errors
+      run: |
+        echo "-- Display snyk-error.log file"
+        cat snyk-error.log
+
+    # Upload Dependency Graph to Datadog
+    - name: Upload Dependency Graph to Datadog
+      uses: datadog/github-action-vulnerability-analysis@v0.3
+      with:
+        service: 'altoro-mutual'
+        version: '1.0.0'
+        site: 'datadoghq.eu'
+      env:
+        DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+        DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY }}
 
     # Deploy to Cloud Run
     - name: Deploy to Cloud Run
@@ -85,16 +106,8 @@ jobs:
           --image=${{ steps.build.outputs.image }} \
           --platform managed \
           --allow-unauthenticated
-        # Test if Datadog Agent is running
-    - name: Check Datadog Agent State
-      run: |
-        curl -s --unix-socket /var/run/datadog/apm.socket http://localhost/info | jq
-      env:
-        DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
-        DD_AGENT_HOST: localhost
-        DD_TRACE_AGENT_PORT: 8126
-        DD_LOG_LEVEL: debug
 
+    # Test Datadog Integration
     - name: Test Datadog Integration (EU)
       run: |
          curl -X POST "https://http-intake.logs.datadoghq.eu/v1/input" \
@@ -107,23 +120,3 @@ jobs:
            "env": "prod",
            "version": "1.0.0"
          }'
-
-
-    # Set up Java 17 for HawkScan
-    - name: Set up Java 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-
-    - name: Check Java Version
-      run: java -version
-
-    # Run HawkScan
-    - name: Run HawkScan
-      uses: stackhawk/hawkscan-action@v2.2.0
-      with:
-        apiKey: ${{ secrets.HAWKSCAN_API_KEY }}
-
-    
-
