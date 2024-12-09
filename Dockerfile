@@ -21,7 +21,6 @@ RUN cp AltoroJ/build/libs/altoromutual.war /usr/local/tomcat/webapps/
 ADD 'https://dtdg.co/latest-java-tracer' /dd-java-agent.jar
 
 # Unified Service Tagging Environment Variables
-
 ENV DD_SERVICE=altoro-mutual
 ENV DD_API_KEY=97980b005d2da6e9581f0ceb2d1621d5
 ENV DD_ENV=prod
@@ -31,16 +30,34 @@ ENV DD_LOGS_INJECTION=true
 ENV DD_APPSEC_ENABLED=true
 ENV DD_IAST_ENABLED=true
 ENV DD_APPSEC_SCA_ENABLED=true
-ENV DD_SITE datadoghq.eu
+ENV DD_SITE=datadoghq.eu
 ENV DD_APM_INSTRUMENTATION_ENABLED=host
 ENV DD_APM_INSTRUMENTATION_LIBRARIES="java:1,python:2,js:5,dotnet:3"
+
 # Unified Service Tagging Labels
 LABEL eu.datadoghq.tags.service="altoro-mutual"
 LABEL eu.datadoghq.tags.env="prod"
 LABEL eu.datadoghq.tags.version="1.0.0"
 
-# Expose port 8080
-EXPOSE 8080 8126
+# Install Datadog Agent
+RUN curl -L -o /tmp/datadog-agent-install.sh https://install.datadoghq.com/scripts/install_script_agent7.sh && \
+    bash /tmp/datadog-agent-install.sh --api-key=${DD_API_KEY} && \
+    rm /tmp/datadog-agent-install.sh
 
-# Start Tomcat with Datadog Java Agent
-CMD ["sh", "-c", "catalina.sh run -javaagent:/dd-java-agent.jar -Ddd.service=${DD_SERVICE} -Ddd.env=${DD_ENV} -Ddd.version=${DD_VERSION} -Ddd.logs.injection=${DD_LOGS_INJECTION} -Ddd.profiling.enabled=${DD_PROFILING_ENABLED} -Ddd.appsec.enabled=${DD_APPSEC_ENABLED} -Ddd.iast.enabled=${DD_IAST_ENABLED} -Ddd.appsec.sca.enabled=${DD_APPSEC_SCA_ENABLED} -Ddd.git.commit.sha=${DD_GIT_COMMIT_SHA} -Ddd.git.repository_url=${DD_GIT_REPOSITORY_URL} & datadog-agent run"]
+# Expose port 8080
+EXPOSE 8080
+
+# Start Tomcat with Datadog Java Agent and Datadog Agent
+CMD catalina.sh run \
+    -javaagent:/dd-java-agent.jar \
+    -Ddd.service=${DD_SERVICE} \
+    -Ddd.env=${DD_ENV} \
+    -Ddd.version=${DD_VERSION} \
+    -Ddd.logs.injection=${DD_LOGS_INJECTION} \
+    -Ddd.profiling.enabled=${DD_PROFILING_ENABLED} \
+    -Ddd.appsec.enabled=${DD_APPSEC_ENABLED} \
+    -Ddd.iast.enabled=${DD_IAST_ENABLED} \
+    -Ddd.appsec.sca.enabled=${DD_APPSEC_SCA_ENABLED} \
+    -Ddd.git.commit.sha=${DD_GIT_COMMIT_SHA} \
+    -Ddd.git.repository_url=${DD_GIT_REPOSITORY_URL} & \
+    datadog-agent run
