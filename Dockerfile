@@ -37,11 +37,9 @@ RUN curl -X POST "https://api.datadoghq.eu/api/v1/snyk" \
     -H "DD-API-KEY: 97980b005d2da6e9581f0ceb2d1621d5" \
     -H "DD-APP-KEY: 896c5316ff3c5b60a8da8ef9d41e26fbdc620c87" \
     -H "Content-Type: application/json" \
-    -d '{
-      "service": "altoro-mutual",
-      "version": "1.0.0",
-      "site": "datadoghq.eu"
-    }'
+    -d "{\"service\": \"altoro-mutual\", \
+         \"version\": \"1.0.0\", \
+         \"site\": \"datadoghq.eu\"}"
 
 # Deploy the WAR file to Tomcat
 RUN cp AltoroJ/build/libs/altoromutual.war /usr/local/tomcat/webapps/
