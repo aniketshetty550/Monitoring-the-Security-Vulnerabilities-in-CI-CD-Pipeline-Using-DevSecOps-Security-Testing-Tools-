@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y git unzip wget curl ca-certificates
 
 # Install Docker CLI
 RUN apt-get install -y docker.io
-
+RUN service docker start
 # Clone the AltoroJ application
 RUN git clone --branch AltoroJ-3.2 https://github.com/HCL-TECH-SOFTWARE/AltoroJ.git
 
