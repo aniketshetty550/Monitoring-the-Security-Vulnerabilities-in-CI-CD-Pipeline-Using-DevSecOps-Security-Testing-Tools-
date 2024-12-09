@@ -77,7 +77,7 @@ jobs:
        docker run -e "SNYK_TOKEN=${{ secrets.SNYK_TOKEN }}" \
         -v "$PWD:/project" \
         -w /project/AltoroJ \
-        snyk/snyk-cli:gradle-6.9.4 \
+        snyk/snyk-cli:gradle-5.4 \
         test --print-deps --file=build.gradle
   
   
