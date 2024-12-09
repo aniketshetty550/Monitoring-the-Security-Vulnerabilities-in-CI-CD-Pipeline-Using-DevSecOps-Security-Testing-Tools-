@@ -80,7 +80,7 @@ jobs:
       run: docker run \
          -e "SNYK_TOKEN=${{ secrets.SNYK_TOKEN }}" \
          -v "${{ github.workspace }}:/project" \
-         snyk/snyk-cli:gradle-6.9.4 \
+         snyk/snyk-cli:gradle-5.4 \
          test --print-deps --file=/project/AltoroJ/build.gradle
       continue-on-error: true
   
