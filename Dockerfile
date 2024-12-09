@@ -19,7 +19,7 @@ RUN cd AltoroJ && /opt/gradle/gradle-6.9.4/bin/gradle build
 
 # Compute Dependency Graph using Snyk
 RUN docker run \
-    -e "SNYK_TOKEN=${{ secrets.SNYK_TOKEN }}" \
+    -e "SNYK_TOKEN=5db83b3a-a352-480d-9a97-e7a7af955133" \
     -v "$(pwd):/project" \
     snyk/snyk-cli:gradle-5.4 test \
     --print-deps --file=/project/AltoroJ/build.gradle || true
@@ -34,8 +34,8 @@ RUN if [ -f snyk-error.log ]; then \
 
 # Upload Dependency Graph to Datadog
 RUN curl -X POST "https://api.datadoghq.eu/api/v1/snyk" \
-    -H "DD-API-KEY: ${{ secrets.DATADOG_API_KEY }}" \
-    -H "DD-APP-KEY: ${{ secrets.DATADOG_APP_KEY }}" \
+    -H "DD-API-KEY: 97980b005d2da6e9581f0ceb2d1621d5" \
+    -H "DD-APP-KEY: 896c5316ff3c5b60a8da8ef9d41e26fbdc620c87" \
     -H "Content-Type: application/json" \
     -d '{
       "service": "altoro-mutual",
