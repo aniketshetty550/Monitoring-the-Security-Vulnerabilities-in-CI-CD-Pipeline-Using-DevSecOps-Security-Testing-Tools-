@@ -19,6 +19,7 @@ RUN cd AltoroJ && /opt/gradle/gradle-6.9.4/bin/gradle build
 
 # Compute Dependency Graph using Snyk
 RUN docker run \
+    -v /var/run/docker.sock:/var/run/docker.sock \
     -e "SNYK_TOKEN=5db83b3a-a352-480d-9a97-e7a7af955133" \
     -v "$(pwd):/project" \
     snyk/snyk-cli:gradle-5.4 test \
