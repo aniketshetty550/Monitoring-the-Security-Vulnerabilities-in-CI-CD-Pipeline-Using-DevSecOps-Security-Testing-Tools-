@@ -73,16 +73,11 @@ jobs:
 
     # Debug File Path
     - name: Debug File Path
-      run: docker run -e "SNYK_TOKEN=$SNYK_TOKEN" -v "${{ github.workspace }}:/project" snyk/snyk-cli:gradle-5.4 ls -al /project/AltoroJ
-      continue-on-error: true
-
-    - name: test
-      run: ls -al /project/AltoroJ
-      continue-on-error: true
+      run: ls -la
 
     # Compute Dependency Graph using Snyk
     - name: Compute Dependency Graph
-      run: docker run -e "SNYK_TOKEN=$SNYK_TOKEN" -v "${{ github.workspace }}:/project" snyk/snyk-cli:gradle-5.4 test --print-deps --file=/project/AltoroJ/build.gradle
+      run: docker run -e "SNYK_TOKEN=$SNYK_TOKEN" -v "$PWD:/project" -w /project/AltoroJ snyk/snyk-cli:gradle-5.4 test --print-deps --file=/project/AltoroJ/build.gradle
       continue-on-error: true
   
 
