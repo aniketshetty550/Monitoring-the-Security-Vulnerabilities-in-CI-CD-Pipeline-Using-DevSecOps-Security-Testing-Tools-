@@ -31,8 +31,6 @@ ENV DD_APPSEC_ENABLED=true
 ENV DD_IAST_ENABLED=true
 ENV DD_APPSEC_SCA_ENABLED=true
 ENV DD_SITE=datadoghq.eu
-ENV DD_APM_INSTRUMENTATION_ENABLED=host
-ENV DD_APM_INSTRUMENTATION_LIBRARIES="java:1,python:2,js:5,dotnet:3"
 
 # Unified Service Tagging Labels
 LABEL eu.datadoghq.tags.service="altoro-mutual"
@@ -43,6 +41,15 @@ LABEL eu.datadoghq.tags.version="1.0.0"
 RUN curl -L -o /tmp/datadog-agent-install.sh https://install.datadoghq.com/scripts/install_script_agent7.sh && \
     bash /tmp/datadog-agent-install.sh --api-key=${DD_API_KEY} && \
     rm /tmp/datadog-agent-install.sh
+
+# Create Datadog configuration
+RUN mkdir -p /etc/datadog-agent && \
+    echo "api_key: ${DD_API_KEY}" > /etc/datadog-agent/datadog.yaml && \
+    echo "site: ${DD_SITE}" >> /etc/datadog-agent/datadog.yaml && \
+    echo "env: ${DD_ENV}" >> /etc/datadog-agent/datadog.yaml && \
+    echo "service: ${DD_SERVICE}" >> /etc/datadog-agent/datadog.yaml && \
+    echo "version: ${DD_VERSION}" >> /etc/datadog-agent/datadog.yaml && \
+    echo "logs_enabled: true" >> /etc/datadog-agent/datadog.yaml
 
 # Expose port 8080
 EXPOSE 8080
@@ -57,7 +64,5 @@ CMD catalina.sh run \
     -Ddd.profiling.enabled=${DD_PROFILING_ENABLED} \
     -Ddd.appsec.enabled=${DD_APPSEC_ENABLED} \
     -Ddd.iast.enabled=${DD_IAST_ENABLED} \
-    -Ddd.appsec.sca.enabled=${DD_APPSEC_SCA_ENABLED} \
-    -Ddd.git.commit.sha=${DD_GIT_COMMIT_SHA} \
-    -Ddd.git.repository_url=${DD_GIT_REPOSITORY_URL} & \
+    -Ddd.appsec.sca.enabled=${DD_APPSEC_SCA_ENABLED} & \
     datadog-agent run
