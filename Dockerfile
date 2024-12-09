@@ -3,6 +3,9 @@ FROM tomcat:7.0.109-jdk8-openjdk
 # Install required tools
 RUN apt-get update && apt-get install -y git unzip wget curl ca-certificates
 
+# Install Docker CLI
+RUN apt-get install -y docker.io
+
 # Clone the AltoroJ application
 RUN git clone --branch AltoroJ-3.2 https://github.com/HCL-TECH-SOFTWARE/AltoroJ.git
 
@@ -13,6 +16,32 @@ RUN unzip -d /opt/gradle gradle-6.9.4-bin.zip
 
 # Build the application using Gradle
 RUN cd AltoroJ && /opt/gradle/gradle-6.9.4/bin/gradle build
+
+# Compute Dependency Graph using Snyk
+RUN docker run \
+    -e "SNYK_TOKEN=${SNYK_TOKEN}" \
+    -v "$(pwd):/project" \
+    snyk/snyk-cli:gradle-5.4 test \
+    --print-deps --file=/project/AltoroJ/build.gradle || true
+
+# Display Snyk Dependency Graph Errors
+RUN if [ -f snyk-error.log ]; then \
+      echo "-- Display snyk-error.log file"; \
+      cat snyk-error.log; \
+    else \
+      echo "-- No snyk-error.log file found"; \
+    fi
+
+# Upload Dependency Graph to Datadog
+RUN curl -X POST "https://api.datadoghq.eu/api/v1/snyk" \
+    -H "DD-API-KEY: ${DD_API_KEY}" \
+    -H "DD-APP-KEY: ${DATADOG_APP_KEY}" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "service": "altoro-mutual",
+      "version": "1.0.0",
+      "site": "datadoghq.eu"
+    }'
 
 # Deploy the WAR file to Tomcat
 RUN cp AltoroJ/build/libs/altoromutual.war /usr/local/tomcat/webapps/
