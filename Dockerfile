@@ -17,30 +17,30 @@ RUN unzip -d /opt/gradle gradle-6.9.4-bin.zip
 # Build the application using Gradle
 RUN cd AltoroJ && /opt/gradle/gradle-6.9.4/bin/gradle build
 
-# Compute Dependency Graph using Snyk
-RUN docker run \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    -e "SNYK_TOKEN=5db83b3a-a352-480d-9a97-e7a7af955133" \
-    -v "$(pwd):/project" \
-    snyk/snyk-cli:gradle-5.4 test \
-    --print-deps --file=/project/AltoroJ/build.gradle || true
+# # Compute Dependency Graph using Snyk
+# RUN docker run \
+#     -v /var/run/docker.sock:/var/run/docker.sock \
+#     -e "SNYK_TOKEN=5db83b3a-a352-480d-9a97-e7a7af955133" \
+#     -v "$(pwd):/project" \
+#     snyk/snyk-cli:gradle-5.4 test \
+#     --print-deps --file=/project/AltoroJ/build.gradle || true
 
-# Display Snyk Dependency Graph Errors
-RUN if [ -f snyk-error.log ]; then \
-      echo "-- Display snyk-error.log file"; \
-      cat snyk-error.log; \
-    else \
-      echo "-- No snyk-error.log file found"; \
-    fi
+# # Display Snyk Dependency Graph Errors
+# RUN if [ -f snyk-error.log ]; then \
+#       echo "-- Display snyk-error.log file"; \
+#       cat snyk-error.log; \
+#     else \
+#       echo "-- No snyk-error.log file found"; \
+#     fi
 
-# Upload Dependency Graph to Datadog
-RUN curl -X POST "https://api.datadoghq.eu/api/v1/snyk" \
-    -H "DD-API-KEY: 97980b005d2da6e9581f0ceb2d1621d5" \
-    -H "DD-APP-KEY: 896c5316ff3c5b60a8da8ef9d41e26fbdc620c87" \
-    -H "Content-Type: application/json" \
-    -d "{\"service\": \"altoro-mutual\", \
-         \"version\": \"1.0.0\", \
-         \"site\": \"datadoghq.eu\"}"
+# # Upload Dependency Graph to Datadog
+# RUN curl -X POST "https://api.datadoghq.eu/api/v1/snyk" \
+#     -H "DD-API-KEY: 97980b005d2da6e9581f0ceb2d1621d5" \
+#     -H "DD-APP-KEY: 896c5316ff3c5b60a8da8ef9d41e26fbdc620c87" \
+#     -H "Content-Type: application/json" \
+#     -d "{\"service\": \"altoro-mutual\", \
+#          \"version\": \"1.0.0\", \
+#          \"site\": \"datadoghq.eu\"}"
 
 # Deploy the WAR file to Tomcat
 RUN cp AltoroJ/build/libs/altoromutual.war /usr/local/tomcat/webapps/
