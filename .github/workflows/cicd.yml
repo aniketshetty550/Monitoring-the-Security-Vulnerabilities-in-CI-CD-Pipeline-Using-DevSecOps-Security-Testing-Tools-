@@ -82,19 +82,27 @@ jobs:
           --platform managed \
           --allow-unauthenticated
 
-    - name: Compute dependency graph
-      run: docker run -e "SNYK_TOKEN=$SNYK_TOKEN" -v "$PWD:/project" snyk/snyk-cli:gradle-5.4 test --print-deps --file=my-app/build.gradle.kts
-      env:
-            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-    - name: Upload dependency graph to Datadog
-      uses: datadog/github-action-vulnerability-analysis@v0.3
-      with:
-            service: 'altro-mutual'
-            version: 'v2.1'
-            site: 'datadoghq.eu'
-      env:
-            DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
-            DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY }}
+    # Run Snyk Test
+    - name: Run Snyk Test
+      continue-on-error: true
+      run: |-
+        npm install snyk -g
+        snyk auth ${{ secrets.SNYK_TOKEN }}
+        snyk code test
+
+    # - name: Compute dependency graph
+    #   run: docker run -e "SNYK_TOKEN=$SNYK_TOKEN" -v "$PWD:/project" snyk/snyk-cli:gradle-5.4 test --print-deps --file=my-app/build.gradle.kts
+    #   env:
+    #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+    # - name: Upload dependency graph to Datadog
+    #   uses: datadog/github-action-vulnerability-analysis@v0.3
+    #   with:
+    #         service: 'altro-mutual'
+    #         version: 'v2.1'
+    #         site: 'datadoghq.eu'
+    #   env:
+    #         DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+    #         DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY }}
 
     # Test if Datadog Agent is running
     - name: Check Datadog Agent State
