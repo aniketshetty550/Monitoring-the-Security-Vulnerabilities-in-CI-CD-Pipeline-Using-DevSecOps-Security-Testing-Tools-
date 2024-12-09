@@ -89,7 +89,7 @@ jobs:
     - name: Upload dependency graph to Datadog
       uses: datadog/github-action-vulnerability-analysis@v0.3
       with:
-            service: 'app-name'
+            service: 'altro-mutual'
             version: 'v2.1'
             site: 'datadoghq.eu'
       env:
