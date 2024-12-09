@@ -38,8 +38,6 @@ ENV DD_APM_INSTRUMENTATION_LIBRARIES="java:1,python:2,js:5,dotnet:3"
 LABEL eu.datadoghq.tags.service="altoro-mutual"
 LABEL eu.datadoghq.tags.env="prod"
 LABEL eu.datadoghq.tags.version="1.0.0"
-RUN curl -L https://github.com/DataDog/datadog-agent/releases/latest/download/docker-image.tar.gz | tar xz && \
-    docker load -i docker-image.tar.gz
 
 # Expose port 8080
 EXPOSE 8080 8126
