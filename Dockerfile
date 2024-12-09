@@ -39,10 +39,10 @@ LABEL eu.datadoghq.tags.version="1.0.0"
 
 # Install Datadog Agent
 RUN curl -L -o /tmp/datadog-agent-install.sh https://install.datadoghq.com/scripts/install_script_agent7.sh && \
-    bash /tmp/datadog-agent-install.sh --api-key=${DD_API_KEY} && \
+    bash /tmp/datadog-agent-install.sh --api-key=${DD_API_KEY} --site=${DD_SITE} && \
     rm /tmp/datadog-agent-install.sh
 
-# Create Datadog configuration
+# Create the necessary configuration files
 RUN mkdir -p /etc/datadog-agent && \
     echo "api_key: ${DD_API_KEY}" > /etc/datadog-agent/datadog.yaml && \
     echo "site: ${DD_SITE}" >> /etc/datadog-agent/datadog.yaml && \
