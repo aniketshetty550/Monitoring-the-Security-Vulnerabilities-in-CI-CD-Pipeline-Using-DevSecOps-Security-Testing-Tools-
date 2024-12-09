@@ -73,12 +73,7 @@ jobs:
 
     # Compute Dependency Graph using Snyk
     - name: Compute Dependency Graph
-      run: |-
-       docker run -e "SNYK_TOKEN=${{ secrets.SNYK_TOKEN }}" \
-        -v "$PWD:/project" \
-        -w /project/AltoroJ \
-        snyk/snyk-cli:gradle-5.4 \
-        test --print-deps --file=build.gradle
+      run: docker run -e "SNYK_TOKEN=$SNYK_TOKEN" -v "$PWD:/project" snyk/snyk-cli:gradle-5.4 test --print-deps --file=AltoroJ/build.gradle
   
   
 
