@@ -71,40 +71,7 @@ jobs:
         docker push $GCR_IMAGE
         echo "::set-output name=image::$GCR_IMAGE"
 
-    # Debug File Path
-    - name: Debug Project Directory
-      run: |
-        ls -al ${{ github.workspace }}/AltoroJ
-        ls -al ${{ github.workspace }}
-
-
-    # Compute Dependency Graph using Snyk
-    - name: Compute Dependency Graph
-      run: |
-       docker run \
-        -e "SNYK_TOKEN=${{ secrets.SNYK_TOKEN }}" \
-        -v "${{ github.workspace }}:/project" \
-        snyk/snyk-cli:gradle-5.4 test \
-        --print-deps --file=/project/AltoroJ/build.gradle
-
-  
-
-    - name: Display Snyk Dependency Graph Errors
-      run: |
-        echo "-- Display snyk-error.log file"
-        cat snyk-error.log
-
-    # Upload Dependency Graph to Datadog
-    - name: Upload Dependency Graph to Datadog
-      uses: datadog/github-action-vulnerability-analysis@v0.3
-      with:
-        service: 'altoro-mutual'
-        version: '1.0.0'
-        site: 'datadoghq.eu'
-      env:
-        DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
-        DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY }}
-
+ 
     # Deploy to Cloud Run
     - name: Deploy to Cloud Run
       run: |-
