@@ -107,7 +107,17 @@ jobs:
           --platform managed \
           --allow-unauthenticated
 
-    # Test Datadog Integration
+    # Test if Datadog Agent is running
+    - name: Check Datadog Agent State
+      run: |
+        curl -s --unix-socket /var/run/datadog/apm.socket http://localhost/info | jq
+      env:
+        DD_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+        DD_AGENT_HOST: localhost
+        DD_TRACE_AGENT_PORT: 8126
+        DD_LOG_LEVEL: debug
+
+    # Test Datadog Integration (EU)
     - name: Test Datadog Integration (EU)
       run: |
          curl -X POST "https://http-intake.logs.datadoghq.eu/v1/input" \
@@ -120,3 +130,19 @@ jobs:
            "env": "prod",
            "version": "1.0.0"
          }'
+
+    # Set up Java 17 for HawkScan
+    - name: Set up Java 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Check Java Version
+      run: java -version
+
+    # Run HawkScan
+    - name: Run HawkScan
+      uses: stackhawk/hawkscan-action@v2.2.0
+      with:
+        apiKey: ${{ secrets.HAWKSCAN_API_KEY }}
