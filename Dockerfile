@@ -21,7 +21,9 @@ RUN cp AltoroJ/build/libs/altoromutual.war /usr/local/tomcat/webapps/
 ADD 'https://dtdg.co/latest-java-tracer' /dd-java-agent.jar
 
 # Unified Service Tagging Environment Variables
+
 ENV DD_SERVICE=altoro-mutual
+ENV DD_API_KEY=97980b005d2da6e9581f0ceb2d1621d5
 ENV DD_ENV=prod
 ENV DD_VERSION=1.0.0
 ENV DD_PROFILING_ENABLED=true
@@ -30,11 +32,13 @@ ENV DD_APPSEC_ENABLED=true
 ENV DD_IAST_ENABLED=true
 ENV DD_APPSEC_SCA_ENABLED=true
 ENV DD_SITE datadoghq.eu
+ENV DD_APM_INSTRUMENTATION_ENABLED=host
+ENV DD_APM_INSTRUMENTATION_LIBRARIES="java:1,python:2,js:5,dotnet:3"
 # Unified Service Tagging Labels
 LABEL eu.datadoghq.tags.service="altoro-mutual"
 LABEL eu.datadoghq.tags.env="prod"
 LABEL eu.datadoghq.tags.version="1.0.0"
-
+RUN bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_agent7.sh)"
 # Expose port 8080
 EXPOSE 8080
 
