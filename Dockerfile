@@ -38,20 +38,11 @@ ENV DD_APM_INSTRUMENTATION_LIBRARIES="java:1,python:2,js:5,dotnet:3"
 LABEL eu.datadoghq.tags.service="altoro-mutual"
 LABEL eu.datadoghq.tags.env="prod"
 LABEL eu.datadoghq.tags.version="1.0.0"
-RUN bash -c "$(curl -L https://install.datadoghq.com/scripts/install_script_agent7.sh)"
+RUN curl -L https://github.com/DataDog/datadog-agent/releases/latest/download/docker-image.tar.gz | tar xz && \
+    docker load -i docker-image.tar.gz
+
 # Expose port 8080
-EXPOSE 8080
+EXPOSE 8080 8126
 
 # Start Tomcat with Datadog Java Agent
-CMD ["catalina.sh", "run", \
-     "-javaagent:/dd-java-agent.jar", \
-     "-Ddd.service=${DD_SERVICE}", \
-     "-Ddd.env=${DD_ENV}", \
-     "-Ddd.version=${DD_VERSION}", \
-     "-Ddd.logs.injection=${DD_LOGS_INJECTION}", \
-     "-Ddd.profiling.enabled=${DD_PROFILING_ENABLED}", \
-     "-Ddd.appsec.enabled=${DD_APPSEC_ENABLED}", \
-     "-Ddd.iast.enabled=${DD_IAST_ENABLED}", \
-     "-Ddd.appsec.sca.enabled=${DD_APPSEC_SCA_ENABLED}", \
-     "-Ddd.git.commit.sha=${DD_GIT_COMMIT_SHA}", \
-     "-Ddd.git.repository_url=${DD_GIT_REPOSITORY_URL}"]
+CMD ["sh", "-c", "catalina.sh run -javaagent:/dd-java-agent.jar -Ddd.service=${DD_SERVICE} -Ddd.env=${DD_ENV} -Ddd.version=${DD_VERSION} -Ddd.logs.injection=${DD_LOGS_INJECTION} -Ddd.profiling.enabled=${DD_PROFILING_ENABLED} -Ddd.appsec.enabled=${DD_APPSEC_ENABLED} -Ddd.iast.enabled=${DD_IAST_ENABLED} -Ddd.appsec.sca.enabled=${DD_APPSEC_SCA_ENABLED} -Ddd.git.commit.sha=${DD_GIT_COMMIT_SHA} -Ddd.git.repository_url=${DD_GIT_REPOSITORY_URL} & datadog-agent run"]
