@@ -33,6 +33,12 @@ ENV DD_IAST_ENABLED=true
 ENV DD_APPSEC_SCA_ENABLED=true
 ENV DD_SITE=datadoghq.eu
 
+# Git repository and commit information
+ARG DD_GIT_REPOSITORY_URL
+ARG DD_GIT_COMMIT_SHA
+ENV DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL}
+ENV DD_GIT_COMMIT_SHA=${DD_GIT_COMMIT_SHA}
+
 # Unified Service Tagging Labels
 LABEL eu.datadoghq.tags.service="altoro-mutual"
 LABEL eu.datadoghq.tags.env="prod"
@@ -52,4 +58,6 @@ CMD ["catalina.sh", "run", \
      "-Ddd.profiling.enabled=${DD_PROFILING_ENABLED}", \
      "-Ddd.appsec.enabled=${DD_APPSEC_ENABLED}", \
      "-Ddd.iast.enabled=${DD_IAST_ENABLED}", \
-     "-Ddd.appsec.sca.enabled=${DD_APPSEC_SCA_ENABLED}"]
+     "-Ddd.appsec.sca.enabled=${DD_APPSEC_SCA_ENABLED}", \
+     "-Ddd.git.commit.sha=${DD_GIT_COMMIT_SHA}", \
+     "-Ddd.git.repository_url=${DD_GIT_REPOSITORY_URL}"]
